@@ -1268,7 +1268,7 @@ const DIMENSION_INSIGHTS = {
 // ===== Unlock System (Frontend Hash Verification) =====
 function hashCode(str){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return String(Math.abs(h));}
 const UNLOCK_HASHES={};
-(function(){const codes=['VIP888','RELAX888','LOVE888','HOPE888','CALM888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});})();
+(function(){const codes=['VIP888','RELAX888','LOVE888','抑郁888','焦虑888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});UNLOCK_HASHES._universal=hashCode('解锁888');})();
 
 // ===== Vue Instance =====
 new Vue({
@@ -1727,7 +1727,7 @@ new Vue({
         this.passwordModal.error='请输入体验码';
         return;
       }
-      if(hashCode(input)===UNLOCK_HASHES[scaleId]){
+      if(hashCode(input)===UNLOCK_HASHES[scaleId]||hashCode(input)===UNLOCK_HASHES._universal){
         if(!this.unlockedReports.includes(scaleId)){
           this.unlockedReports.push(scaleId);
         }
