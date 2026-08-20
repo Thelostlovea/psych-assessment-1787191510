@@ -985,7 +985,8 @@ body {
     <h3>输入体验码</h3>
     <p class="modal-desc">输入体验码解锁 {{ getScaleName(passwordModal.scaleId) }} 完整报告</p>
     <input v-model="passwordModal.input" class="modal-input" :class="{error: passwordModal.error}"
-           type="text" placeholder="请输入体验码" maxlength="20"
+           type="text" placeholder="请输入体验码" maxlength="20" autocomplete="off"
+           autocorrect="off" autocapitalize="characters" spellcheck="false"
            @keyup.enter="verifyPassword" />
     <div v-if="passwordModal.error" class="modal-error">{{ passwordModal.error }}</div>
     <button class="modal-btn" @click="verifyPassword">确认解锁</button>
@@ -1268,7 +1269,7 @@ const DIMENSION_INSIGHTS = {
 // ===== Unlock System (Frontend Hash Verification) =====
 function hashCode(str){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return String(Math.abs(h));}
 const UNLOCK_HASHES={};
-(function(){const codes=['VIP888','RELAX888','LOVE888','抑郁888','焦虑888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});UNLOCK_HASHES._universal=hashCode('解锁888');})();
+(function(){const codes=['VIP888','RELAX888','LOVE888','PHQ888','GAD888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});UNLOCK_HASHES._universal=hashCode('888888');})();
 
 // ===== Vue Instance =====
 new Vue({
