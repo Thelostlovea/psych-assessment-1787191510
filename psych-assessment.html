@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>专业心理测评中心</title>
+<script src="https://unpkg.com/vue@2.7.16/dist/vue.min.js"></script>
+<script src="https://unpkg.com/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+:root {
+  --primary: #5b7a9c;
+  --primary-dark: #3f5670;
+  --primary-light: #7a9bbf;
+  --secondary: #6b8f6e;
+  --secondary-light: #8bab8e;
+  --warn: #c47b6b;
+  --warn-light: #d99a8e;
+  --amber: #d4a648;
+  --purple: #8a7ab8;
+  --bg: #f6f4f1;
+  --bg-card: #ffffff;
+  --ink: #2b2b33;
+  --muted: #7a7a85;
+  --rule: #e2ddd6;
+  --shadow: 0 2px 16px rgba(60,60,80,0.08);
+  --shadow-lg: 0 8px 32px rgba(60,60,80,0.12);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --leg0: #e2ddd6;
+  --leg1: #6b8f6e;
+  --leg2: #d4a648;
+  --leg3: #c47b6b;
+  --leg4: #8b3a3a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+#app { height: 100%; }
+
+/* ===== App Container ===== */
+.app-container {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ===== Header ===== */
+.header-section {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  padding: 28px 20px 24px;
+  text-align: center;
+  border-radius: 0 0 24px 24px;
+}
+.header-section h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.header-section p { font-size: 13px; opacity: 0.8; }
+
+/* ===== Filter Tabs ===== */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.filter-tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1.5px solid var(--rule);
+  color: var(--muted);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all .2s;
+}
+.filter-tab.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* ===== Scale Cards ===== */
+.scale-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px 20px;
+}
+.scale-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--rule);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.scale-card:active { transform: scale(0.98); }
+.scale-card .icon-box {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.scale-card .icon-box svg { width: 22px; height: 22px; }
+.scale-card .card-body { flex: 1; min-width: 0; }
+.scale-card .card-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.scale-card .card-meta {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  font-size: 12px; color: var(--muted); margin-bottom: 8px;
+}
+.scale-card .card-meta span { display: flex; align-items: center; gap: 3px; }
+.scale-card .card-meta svg { width: 13px; height: 13px; }
+.scale-card .card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.scale-card .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+.badge-free { background: rgba(107,143,110,0.12); color: var(--secondary); }
+.badge-reliability { background: rgba(91,122,156,0.08); color: var(--primary); }
+.scale-card .card-arrow {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.scale-card .card-arrow svg { width: 14px; height: 14px; color: var(--primary); }
+
+.icon-blue { background: rgba(91,122,156,0.12); color: var(--primary); }
+.icon-green { background: rgba(107,143,110,0.12); color: var(--secondary); }
+.icon-orange { background: rgba(196,123,107,0.12); color: var(--warn); }
+.icon-purple { background: rgba(138,122,184,0.12); color: var(--purple); }
+.icon-yellow { background: rgba(212,166,72,0.12); color: var(--amber); }
+
+/* ===== Guide Page ===== */
+.guide-page { padding: 0 0 20px; }
+.guide-hero { padding: 28px 20px 16px; text-align: center; }
+.guide-hero .gh-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-hero .gh-icon svg { width: 28px; height: 28px; }
+.guide-hero h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.guide-hero .gh-sub { font-size: 13px; color: var(--muted); }
+
+.guide-info {
+  margin: 0 16px 16px;
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+}
+.guide-info .info-chip {
+  font-size: 12px; padding: 4px 12px;
+  border-radius: 6px;
+  background: rgba(91,122,156,0.08);
+  color: var(--primary); font-weight: 600;
+}
+
+.guide-section {
+  margin: 0 16px 14px;
+  padding: 14px;
+  background: rgba(91,122,156,0.05);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary);
+}
+.guide-section h4 {
+  font-size: 13px; font-weight: 700; color: var(--primary);
+  margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+}
+.guide-section h4 svg { width: 14px; height: 14px; }
+.guide-section p { font-size: 13px; line-height: 1.65; }
+.guide-section .reliability-row { display: flex; gap: 16px; margin-top: 6px; }
+.guide-section .r-item { font-size: 12px; }
+.guide-section .r-label { color: var(--muted); }
+.guide-section .r-value { font-weight: 700; color: var(--primary); }
+
+.disclaimer-box {
+  margin: 0 16px 14px;
+  padding: 10px 14px;
+  background: rgba(196,123,107,0.08);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--warn);
+  font-size: 12px; color: var(--warn); line-height: 1.5;
+}
+
+.guide-checkbox {
+  margin: 0 16px 14px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; cursor: pointer;
+}
+.guide-checkbox .check-box {
+  width: 18px; height: 18px;
+  border: 2px solid var(--primary);
+  border-radius: 4px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+.guide-checkbox .check-box.checked { background: var(--primary); }
+.guide-checkbox .check-box.checked svg { width: 12px; height: 12px; color: #fff; }
+
+.btn-primary {
+  margin: 0 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff; text-align: center;
+  padding: 14px; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 700;
+  box-shadow: 0 4px 14px rgba(91,122,156,0.3);
+  border: none; width: calc(100% - 32px);
+  cursor: pointer;
+}
+.btn-primary.disabled {
+  background: var(--rule); color: var(--muted);
+  box-shadow: none; cursor: not-allowed;
+}
+
+/* ===== Quiz Page ===== */
+.quiz-page { display: flex; flex-direction: column; min-height: 100vh; }
+.quiz-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--rule);
+}
+.quiz-nav .nav-left { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--primary); cursor: pointer; }
+.quiz-nav .nav-left svg { width: 18px; height: 18px; }
+.quiz-nav .nav-title { font-size: 15px; font-weight: 700; }
+.quiz-nav .nav-right { font-size: 14px; font-weight: 700; color: var(--primary); }
+
+.quiz-progress {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; padding: 20px 0 8px;
+}
+.ring-progress { position: relative; width: 52px; height: 52px; }
+.ring-progress svg { transform: rotate(-90deg); }
+.ring-progress .ring-text {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 12px; font-weight: 700; color: var(--primary);
+}
+.quiz-counter { font-size: 14px; font-weight: 700; }
+.quiz-counter span { color: var(--muted); font-weight: 400; }
+
+.quiz-question {
+  padding: 20px 20px 12px;
+  font-size: 17px; font-weight: 700; line-height: 1.5;
+}
+.quiz-options { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  padding: 14px 16px;
+  border: 2px solid var(--rule);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all .15s;
+}
+.quiz-option:active { transform: scale(0.98); }
+.quiz-option .opt-marker {
+  width: 20px; height: 20px;
+  border: 2px solid var(--rule);
+  border-radius: 50%; flex-shrink: 0;
+  transition: all .15s;
+}
+.quiz-option.selected {
+  border-color: var(--primary);
+  background: rgba(91,122,156,0.06);
+  font-weight: 600;
+}
+.quiz-option.selected .opt-marker {
+  border-color: var(--primary);
+  background: var(--primary);
+  position: relative;
+}
+.quiz-option.selected .opt-marker::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 8px; height: 8px; border-radius: 50%; background: #fff;
+}
+.quiz-hint { padding: 0 20px 20px; font-size: 12px; color: var(--muted); text-align: center; }
+
+/* Slide transition */
+.slide-enter-active, .slide-leave-active { transition: transform .25s ease, opacity .2s ease; }
+.slide-enter { transform: translateX(30px); opacity: 0; }
+.slide-leave-to { transform: translateX(-30px); opacity: 0; }
+.slide-reverse-enter { transform: translateX(-30px); opacity: 0; }
+.slide-reverse-leave-to { transform: translateX(30px); opacity: 0; }
+
+/* Transition overlay */
+.transition-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 9999; color: #fff;
+}
+.transition-overlay .spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.transition-overlay p { font-size: 15px; font-weight: 600; opacity: 0.9; }
+
+/* ===== Report Page ===== */
+.report-page { padding: 0 0 20px; }
+.report-header {
+  color: #fff;
+  padding: 16px 20px 20px;
+  text-align: center;
+}
+.report-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.report-header .report-date { font-size: 12px; opacity: 0.7; }
+
+.report-score-card {
+  margin: 16px;
+  padding: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.report-score-card .score-label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.report-score-card .score-value {
+  font-size: 40px; line-height: 1.1;
+}
+.report-score-card .score-max { font-size: 15px; color: var(--muted); }
+.report-score-card .risk-badge {
+  display: inline-block; margin-top: 8px;
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 700;
+}
+.risk-low { background: rgba(107,143,110,0.15); color: var(--secondary); }
+.risk-mid { background: rgba(212,166,72,0.15); color: #9c6500; }
+.risk-high { background: rgba(196,123,107,0.15); color: var(--warn); }
+
+.score-percentile {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 6px; padding: 4px 12px;
+  border-radius: 20px; font-size: 12px; font-weight: 700;
+  background: rgba(212,166,72,0.12); color: #9c6500;
+}
+.score-percentile svg { width: 12px; height: 12px; }
+
+.report-conclusion {
+  margin: 0 16px 16px;
+  padding: 14px 16px;
+  background: rgba(91,122,156,0.06);
+  border-radius: var(--radius-sm);
+  font-size: 14px; line-height: 1.65;
+  border-left: 3px solid var(--primary);
+}
+
+.report-section-title {
+  margin: 20px 16px 12px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 700;
+}
+.report-section-title svg { width: 16px; height: 16px; color: var(--primary); }
+
+.chart-container {
+  margin: 0 16px 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Dimension cards */
+.dim-card {
+  margin: 0 16px 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.dim-card .dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.dim-card .dim-name { font-size: 15px; font-weight: 700; }
+.dim-card .dim-score { font-size: 15px; font-weight: 700; color: var(--primary); }
+.dim-bar-wrap { height: 8px; background: var(--rule); border-radius: 4px; margin-bottom: 6px; position: relative; }
+.dim-bar-user { height: 100%; border-radius: 4px; background: var(--primary); }
+.dim-bar-norm { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--secondary); border-radius: 1px; }
+.dim-card .dim-compare { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.dim-card .dim-compare .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.dim-card .dim-desc { font-size: 13px; line-height: 1.6; margin-bottom: 8px; }
+.dim-card .dim-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.dim-card .dim-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(91,122,156,0.08); color: var(--primary); font-weight: 600; }
+
+/* Risk distribution */
+.score-distribution { margin: 0 16px 16px; padding: 16px; background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); }
+.score-distribution .sd-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.score-distribution .sd-title svg { width: 14px; height: 14px; color: var(--primary); }
+.score-distribution .sd-bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; margin-bottom: 6px; }
+.score-distribution .sd-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; }
+.score-distribution .sd-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; }
+.score-distribution .sd-bar.b1 { background: var(--secondary); }
+.score-distribution .sd-bar.b2 { background: var(--amber); }
+.score-distribution .sd-bar.b3 { background: var(--warn); }
+.score-distribution .sd-bar.b4 { background: #8b3a3a; }
+.score-distribution .sd-bar-current { outline: 3px solid var(--primary); outline-offset: 2px; }
+.score-distribution .sd-label { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
+.score-distribution .sd-label .pct { font-weight: 700; color: var(--ink); }
+.score-distribution .sd-you-marker { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+.score-distribution .sd-x-labels { display: flex; gap: 6px; margin-top: 4px; }
+.score-distribution .sd-x-labels > div { flex: 1; text-align: center; font-size: 10px; color: var(--muted); }
+
+/* Risk level cards */
+.risk-cards { margin: 0 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.risk-card { padding: 8px 12px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.risk-card .rc-bar { width: 4px; height: 24px; border-radius: 2px; flex-shrink: 0; }
+.risk-card .rc-label { font-weight: 600; color: var(--muted); }
+.risk-card .rc-range { font-weight: 700; }
+.risk-card.current { background: rgba(91,122,156,0.06); }
+.risk-card.current .rc-label { color: var(--primary); font-weight: 700; }
+
+/* Item breakdown */
+.item-card {
+  margin: 0 16px 8px; padding: 12px 14px;
+  background: var(--bg-card); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 12px;
+}
+.item-card .item-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(91,122,156,0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.item-card .item-body { flex: 1; min-width: 0; }
+.item-card .item-label { font-size: 13px; font-weight: 600; margin-bottom: 5px; line-height: 1.4; }
+.item-card .item-bar-row { display: flex; gap: 3px; }
+.item-card .seg { width: 20px; height: 6px; border-radius: 2px; background: var(--rule); }
+.item-card .seg.f1 { background: var(--secondary); }
+.item-card .seg.f2 { background: var(--amber); }
+.item-card .seg.f3 { background: var(--warn); }
+.item-card .seg.f4 { background: #8b3a3a; }
+.item-card .item-score-badge { flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+.is0 { background: var(--bg); color: var(--muted); }
+.is1 { background: rgba(107,143,110,0.12); color: var(--secondary); }
+.is2 { background: rgba(212,166,72,0.12); color: #9c6500; }
+.is3 { background: rgba(196,123,107,0.12); color: var(--warn); }
+.is4 { background: rgba(139,58,58,0.12); color: #8b3a3a; }
+.is5 { background: rgba(91,122,156,0.12); color: var(--primary); }
+.item-legend { margin: 8px 16px 16px; display: flex; gap: 14px; font-size: 11px; color: var(--muted); flex-wrap: wrap; }
+.item-legend .li { display: flex; align-items: center; gap: 4px; }
+.item-legend .li-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+/* Insight box */
+.insight-box { margin: 0 16px 12px; padding: 14px 16px; background: rgba(91,122,156,0.06); border-radius: var(--radius-sm); border-left: 3px solid var(--primary); }
+.insight-box .ib-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.insight-box .ib-title svg { width: 14px; height: 14px; }
+.insight-box .ib-text { font-size: 13px; line-height: 1.65; }
+.insight-box .ib-highlight { font-weight: 700; color: var(--primary); }
+
+/* Deep report */
+.deep-card {
+  margin: 0 16px 12px; padding: 16px;
+  background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: var(--shadow); border-left: 4px solid var(--secondary);
+}
+.deep-card .deep-icon-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.deep-card .deep-icon-row svg { width: 18px; height: 18px; color: var(--secondary); }
+.deep-card .deep-icon-row h4 { font-size: 15px; font-weight: 700; }
+.deep-card .deep-text { font-size: 13px; line-height: 1.7; }
+.deep-card .deep-sub-label { font-size: 12px; font-weight: 700; color: var(--secondary); margin: 10px 0 4px; }
+.deep-card .action-block { margin-top: 8px; }
+.deep-card .action-label { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 2px; display: flex; align-items: center; gap: 4px; }
+.deep-card .action-label svg { width: 13px; height: 13px; }
+.deep-card .action-text { font-size: 13px; line-height: 1.65; }
+
+/* Locked section */
+.locked-section {
+  margin: 16px; padding: 40px 20px; min-height: 280px;
+  background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: var(--shadow); text-align: center; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.locked-section::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.85) 100%); z-index: 0;
+}
+.locked-section .lock-content { position: relative; z-index: 1; }
+.locked-section .lock-icon {
+  width: 48px; height: 48px; margin: 0 auto 12px;
+  border-radius: 50%; background: rgba(91,122,156,0.1);
+  display: flex; align-items: center; justify-content: center;
+}
+.locked-section .lock-icon svg { width: 24px; height: 24px; color: var(--primary); }
+.locked-section h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.locked-section p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.locked-section .unlock-btn {
+  display: inline-block; padding: 10px 28px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff; border-radius: 24px; font-size: 14px; font-weight: 700;
+  box-shadow: 0 4px 14px rgba(91,122,156,0.3); border: none; cursor: pointer;
+}
+
+/* Bottom action bar */
+.action-bar {
+  display: flex; gap: 8px; padding: 12px 16px 20px;
+  background: var(--bg-card); border-top: 1px solid var(--rule);
+}
+.action-bar .action-btn {
+  flex: 1; padding: 10px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  border: none; cursor: pointer;
+}
+.action-bar .action-btn svg { width: 15px; height: 15px; }
+.action-btn.secondary { background: var(--bg); color: var(--muted); }
+.action-btn.primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; }
+
+/* Hotline */
+.hotline-box {
+  margin: 0 16px 16px; padding: 12px 16px;
+  background: rgba(196,123,107,0.08); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--warn); font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hotline-box svg { width: 16px; height: 16px; color: var(--warn); flex-shrink: 0; }
+.hotline-box .hotline-num { font-weight: 700; color: var(--warn); }
+
+/* ===== Password Modal ===== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px;
+}
+.dialog-modal {
+  background: var(--bg-card);
+  border-radius: 20px;
+  width: 100%; max-width: 360px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-lg);
+}
+.dialog-modal .close-btn {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; background: var(--bg);
+  font-size: 16px; color: var(--muted); cursor: pointer;
+}
+.dialog-modal h3 { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 16px; }
+.dialog-modal .modal-icon { width: 48px; height: 48px; margin: 0 auto 14px; border-radius: 50%; background: rgba(91,122,156,0.1); display: flex; align-items: center; justify-content: center; }
+.dialog-modal .modal-icon svg { width: 24px; height: 24px; color: var(--primary); }
+.dialog-modal .modal-desc { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 16px; }
+.dialog-modal .modal-input {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid var(--rule); border-radius: var(--radius-sm);
+  font-size: 16px; text-align: center; letter-spacing: 2px;
+  outline: none; transition: border-color .2s;
+  font-family: inherit;
+}
+.dialog-modal .modal-input:focus { border-color: var(--primary); }
+.dialog-modal .modal-input.error { border-color: var(--warn); }
+.dialog-modal .modal-error { font-size: 12px; color: var(--warn); text-align: center; margin-top: 6px; }
+.dialog-modal .modal-btn {
+  width: 100%; margin-top: 14px; padding: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.dialog-modal .modal-hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+/* ===== Slide Transitions ===== */
+.slide-left-enter-active, .slide-left-leave-active,
+.slide-right-enter-active, .slide-right-leave-active {
+  transition: transform .25s ease, opacity .25s ease;
+}
+.slide-left-enter { transform: translateX(30px); opacity: 0; }
+.slide-left-leave-to { transform: translateX(-30px); opacity: 0; }
+.slide-right-enter { transform: translateX(-30px); opacity: 0; }
+.slide-right-leave-to { transform: translateX(30px); opacity: 0; }
+
+/* ===== Transition Overlay ===== */
+.transition-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg); z-index: 999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.transition-overlay .spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--rule); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+.transition-overlay p { margin-top: 14px; font-size: 14px; color: var(--muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Report Score Card ===== */
+.report-score-card {
+  margin: 0 16px 16px; padding: 20px 16px;
+  background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: var(--shadow); text-align: center;
+}
+.report-score-card .score-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.report-score-card .score-value { font-size: 36px; font-weight: 800; line-height: 1; }
+.report-score-card .score-max { font-size: 14px; color: var(--muted); }
+.report-score-card .risk-badge {
+  display: inline-block; margin-top: 8px; padding: 4px 14px;
+  border-radius: 20px; font-size: 12px; font-weight: 700;
+}
+.report-score-card .risk-badge.risk-normal { background: rgba(107,143,110,0.12); color: var(--secondary); }
+.report-score-card .risk-badge.risk-medium { background: rgba(212,166,72,0.12); color: #9c6500; }
+.report-score-card .risk-badge.risk-high { background: rgba(196,123,107,0.12); color: var(--warn); }
+.report-score-card .score-percentile {
+  margin-top: 8px; font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.report-score-card .score-percentile svg { width: 12px; height: 12px; }
+
+/* ===== Report Header ===== */
+.report-header {
+  margin: 0 16px 16px; padding: 20px 16px;
+  border-radius: var(--radius); color: #fff;
+  box-shadow: var(--shadow);
+}
+.report-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.report-header .report-date { font-size: 12px; opacity: 0.8; }
+
+/* ===== Report Common ===== */
+.report-page { display: flex; flex-direction: column; min-height: 100vh; }
+.report-conclusion {
+  margin: 0 16px 16px; padding: 14px 16px;
+  background: var(--bg-card); border-radius: var(--radius-sm);
+  border-left: 4px solid var(--primary); box-shadow: var(--shadow);
+  font-size: 13px; line-height: 1.7;
+}
+.report-section-title {
+  padding: 12px 16px 8px; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px; color: var(--ink);
+}
+.report-section-title svg { width: 16px; height: 16px; color: var(--primary); }
+.chart-container { margin: 0 16px 16px; padding: 12px; background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+/* ===== Dimension Cards ===== */
+.dim-card {
+  margin: 0 16px 8px; padding: 14px 16px;
+  background: var(--bg-card); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+.dim-card .dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.dim-card .dim-name { font-size: 14px; font-weight: 700; }
+.dim-card .dim-score { font-size: 14px; font-weight: 800; color: var(--primary); }
+.dim-card .dim-bar-wrap { position: relative; height: 8px; background: var(--rule); border-radius: 4px; margin-bottom: 6px; }
+.dim-card .dim-bar-user { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; background: var(--primary); transition: width .6s ease; }
+.dim-card .dim-bar-norm { position: absolute; top: -2px; width: 2px; height: 12px; background: var(--secondary); border-radius: 1px; }
+.dim-card .dim-compare { display: flex; gap: 14px; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.dim-card .dim-compare .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 3px; }
+.dim-card .dim-desc { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 6px; }
+.dim-card .dim-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.dim-card .dim-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(91,122,156,0.08); color: var(--primary); font-weight: 600; }
+
+/* ===== Hotline ===== */
+.hotline-box {
+  margin: 16px; padding: 12px 16px;
+  background: rgba(196,123,107,0.08); border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+  border: 1px solid rgba(196,123,107,0.2);
+}
+.hotline-box svg { width: 18px; height: 18px; color: var(--warn); flex-shrink: 0; }
+.hotline-box .hotline-num { font-weight: 800; color: var(--warn); }
+
+/* ===== Action Bar ===== */
+.action-bar {
+  position: sticky; bottom: 0; display: flex; gap: 8px;
+  padding: 12px 16px; background: var(--bg-card);
+  box-shadow: 0 -2px 12px rgba(60,60,80,0.06);
+}
+.action-bar .action-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700;
+  border: none; cursor: pointer; transition: opacity .15s;
+}
+.action-bar .action-btn.secondary { background: var(--bg); color: var(--muted); }
+.action-bar .action-btn.primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; }
+.action-bar .action-btn svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+<div id="app">
+<div class="app-container">
+
+<!-- ===== Header ===== -->
+<div class="header-section" v-if="scaleStep === 'select'">
+  <h1>测评中心</h1>
+  <p>专业心理评估 · 量表经过信效度验证</p>
+</div>
+
+<!-- ===== Scale Selection ===== -->
+<div v-if="scaleStep === 'select'" style="flex:1; overflow-y:auto;">
+  <div class="filter-tabs">
+    <div v-for="cat in categories" :key="cat.key"
+         class="filter-tab" :class="{active: activeCategory === cat.key}"
+         @click="activeCategory = cat.key">{{ cat.label }}</div>
+  </div>
+  <div class="scale-cards-grid">
+    <div v-for="scale in filteredScales" :key="scale.type"
+         class="scale-card" @click="enterGuide(scale.type)">
+      <div class="icon-box" :class="scale.iconClass">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" v-html="scale.iconPath"></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">{{ scale.title }}</div>
+        <div class="card-meta">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>{{ scale.questions }}题</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>约{{ scale.duration }}分钟</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>{{ scale.audience }}</span>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-free">免费测评</span>
+          <span class="badge badge-reliability">{{ scale.reliability }}</span>
+        </div>
+      </div>
+      <div class="card-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Guide Page ===== -->
+<div v-if="scaleStep === 'guide'" style="flex:1; overflow-y:auto;" class="guide-page">
+  <div class="quiz-nav">
+    <div class="nav-left" @click="scaleStep = 'select'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      返回
+    </div>
+    <div class="nav-title">{{ currentScale.title }}</div>
+    <div style="width:40px;"></div>
+  </div>
+  <div class="guide-hero">
+    <div class="gh-icon" :class="currentScale.iconClass">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" v-html="currentScale.iconPath"></svg>
+    </div>
+    <h2>{{ currentScale.title }}</h2>
+    <div class="gh-sub">{{ currentScale.subtitle }}</div>
+  </div>
+  <div class="guide-info">
+    <div class="info-chip">{{ currentScale.questions }}题</div>
+    <div class="info-chip">约 {{ currentScale.duration }} 分钟</div>
+    <div class="info-chip">{{ currentScale.audience }}</div>
+  </div>
+  <div class="guide-section">
+    <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>指导语</h4>
+    <p>{{ currentInstruction }}</p>
+  </div>
+  <div class="guide-section">
+    <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>信效度</h4>
+    <p>{{ currentScale.reliabilityText }}</p>
+    <div class="reliability-row">
+      <div class="r-item"><span class="r-label">信度</span> <span class="r-value">{{ currentScale.alpha }}</span></div>
+      <div class="r-item"><span class="r-label">效度</span> <span class="r-value">结构效度良好</span></div>
+    </div>
+  </div>
+  <div class="guide-section">
+    <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>参考文献</h4>
+    <p style="font-size:12px;">{{ currentScale.reference }}</p>
+  </div>
+  <div class="disclaimer-box">
+    {{ currentScale.disclaimer }}
+  </div>
+  <div class="guide-checkbox" @click="guideAgreed = !guideAgreed">
+    <div class="check-box" :class="{checked: guideAgreed}">
+      <svg v-if="guideAgreed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+    我已了解测评说明与隐私政策
+  </div>
+  <button class="btn-primary" :class="{disabled: !guideAgreed}" :disabled="!guideAgreed" @click="startQuiz">开始测评</button>
+</div>
+
+<!-- ===== Quiz Page ===== -->
+<div v-if="scaleStep === 'quiz'" class="quiz-page" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
+  <div class="quiz-nav">
+    <div class="nav-left" @click="handleQuizBack">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      返回
+    </div>
+    <div class="nav-title">{{ currentScale.title }}</div>
+    <div class="nav-right">{{ currentQuestionIdx + 1 }}/{{ questions.length }}</div>
+  </div>
+  <div class="quiz-progress">
+    <div class="ring-progress">
+      <svg width="52" height="52">
+        <circle cx="26" cy="26" r="22" fill="none" stroke="#e2ddd6" stroke-width="4"/>
+        <circle cx="26" cy="26" r="22" fill="none" stroke="#5b7a9c" stroke-width="4"
+                :stroke-dasharray="138.23"
+                :stroke-dashoffset="138.23 - (138.23 * (answeredCount / questions.length))"
+                stroke-linecap="round"/>
+      </svg>
+      <div class="ring-text">{{ Math.round(answeredCount / questions.length * 100) }}%</div>
+    </div>
+    <div class="quiz-counter">{{ answeredCount }}<span>/{{ questions.length }}</span></div>
+  </div>
+  <transition :name="slideDirection" mode="out-in">
+    <div :key="currentQuestionIdx">
+      <div class="quiz-question">{{ currentQuestionIdx + 1 }}. {{ questions[currentQuestionIdx].text }}</div>
+      <div class="quiz-options">
+        <div v-for="(opt, optIdx) in questions[currentQuestionIdx].options" :key="opt.value"
+             class="quiz-option"
+             :class="{selected: isSelected(questions[currentQuestionIdx].id, optIdx)}"
+             @click="selectOption(questions[currentQuestionIdx], optIdx)">
+          <div class="opt-marker"></div>
+          {{ opt.label }}
+        </div>
+      </div>
+    </div>
+  </transition>
+  <div class="quiz-hint">选择后自动进入下一题 · 左滑返回上一题</div>
+</div>
+
+<!-- ===== Transition Overlay ===== -->
+<div v-if="scaleStep === 'transition'" class="transition-overlay">
+  <div class="spinner"></div>
+  <p>测评完成，正在生成报告...</p>
+</div>
+
+<!-- ===== Report Pages ===== -->
+<!-- Big Five Report -->
+<div v-if="scaleStep === 'report' && currentScaleType === 'bigfive'" style="flex:1; overflow-y:auto;" class="report-page">
+  <div class="quiz-nav">
+    <div class="nav-left" @click="closeResult"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>返回</div>
+    <div class="nav-title">测评报告</div>
+    <div style="width:40px;"></div>
+  </div>
+  <div class="report-header" style="background: linear-gradient(135deg, #5b7a9c 0%, #3f5670 100%);">
+    <h3>大五人格测评报告</h3>
+    <div class="report-date">{{ reportDate }} 生成</div>
+  </div>
+  <template v-if="isReportUnlocked('bigfive')">
+  <div class="report-conclusion">{{ getPersonalitySummary() }}</div>
+  <div class="report-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>五维度人格轮廓</div>
+  <div class="chart-container"><div ref="chartRadar" style="width:100%;height:280px;"></div></div>
+  <div style="padding:0 16px 16px;display:flex;gap:16px;font-size:12px;color:var(--muted);">
+    <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--primary);margin-right:4px;"></span>你的得分</span>
+    <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--secondary);margin-right:4px;"></span>常模均值</span>
+  </div>
+  <div style="height:8px;background:var(--bg);"></div>
+  <div class="report-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-5"/></svg>维度概览</div>
+  <div v-for="(score, dim) in resultScores" :key="'dim'+dim" class="dim-card">
+    <div class="dim-header"><span class="dim-name">{{ dimLabelMap[dim].label }}</span><span class="dim-score">{{ score }}/50</span></div>
+    <div class="dim-bar-wrap"><div class="dim-bar-user" :style="{width: (score/50*100)+'%'}"></div><div class="dim-bar-norm" :style="{left: (dimNorm[dim]/50*100)+'%'}"></div></div>
+    <div class="dim-compare"><span><span class="dot" style="background:var(--primary);"></span>你: {{ score }}</span><span><span class="dot" style="background:var(--secondary);"></span>常模: {{ dimNorm[dim] }}</span></div>
+    <div class="dim-desc">{{ getDimensionDesc(dim, score) }}</div>
+    <div class="dim-tags"><span v-for="tag in getTags(dim, score)" :key="tag" class="dim-tag">{{ tag }}</span></div>
+  </div>
+  <div style="height:8px;background:var(--bg);"></div>
+    <div class="report-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>深度报告</div>
+    <div class="deep-card"><div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg><h4>性格画像</h4></div><div class="deep-text">{{ getPersonalitySummary() }}</div></div>
+    <div v-for="(score, dim) in resultScores" :key="'insight'+dim" class="deep-card">
+      <div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><h4>{{ dimLabelMap[dim].label }}</h4></div>
+      <div class="deep-text">{{ getDetailedInsight(dim, score) }}</div>
+      <div class="action-block"><div class="action-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg>具体行动</div><div class="action-text">{{ getActionGuide(dim, score) }}</div></div>
+      <div class="action-block"><div class="action-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L4 7v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>成长方向</div><div class="action-text">{{ getGrowthGuide(dim, score) }}</div></div>
+      <div class="action-block"><div class="action-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>人际关系</div><div class="action-text">{{ getRelationshipGuide(dim, score) }}</div></div>
+      <div class="action-block"><div class="action-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-3V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>职场发展</div><div class="action-text">{{ getCareerGuide(dim, score) }}</div></div>
+    </div>
+    <div class="deep-card"><div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><h4>每周自我观察清单</h4></div>
+      <div v-for="(item, idx) in getSelfObservationList()" :key="'obs'+idx" style="font-size:13px;display:flex;gap:8px;margin-top:6px;"><span style="color:var(--secondary);font-weight:700;">{{ idx+1 }}.</span> {{ item }}</div>
+    </div>
+    <div class="action-bar">
+      <button class="action-btn secondary" @click="shareReport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>分享</button>
+      <button class="action-btn primary" @click="closeResult"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重新测评</button>
+    </div>
+  </template>
+  <div v-else class="locked-section"><div class="lock-content">
+    <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <h4>完整报告已锁定</h4>
+    <p>测评结果 · 五维轮廓 · 深度报告 · 行动指南</p>
+    <button class="unlock-btn" @click="openPasswordModal('bigfive')">输入体验码解锁</button>
+  </div></div>
+</div>
+
+<!-- PSS-10 / RSES / PHQ-9 / GAD-7 Report (shared structure) -->
+<div v-if="scaleStep === 'report' && currentScaleType !== 'bigfive'" style="flex:1; overflow-y:auto;" class="report-page">
+  <div class="quiz-nav">
+    <div class="nav-left" @click="closeResult"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>返回</div>
+    <div class="nav-title">测评报告</div>
+    <div style="width:40px;"></div>
+  </div>
+  <div class="report-header" :style="{background: 'linear-gradient(135deg, ' + currentScale.color + ' 0%, ' + currentScale.colorDark + ' 100%)'}">
+    <h3>{{ currentScale.title }}报告</h3>
+    <div class="report-date">{{ reportDate }} 生成 · {{ currentScale.shortName }}</div>
+  </div>
+  <template v-if="isReportUnlocked(currentScaleType)">
+  <div class="report-score-card">
+    <div class="score-label">总分</div>
+    <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+      <span class="score-value" :style="{color: currentRiskColor}">{{ currentTotalScore }}</span>
+      <span class="score-max">/ {{ currentScale.maxScore }}</span>
+    </div>
+    <div class="risk-badge" :class="currentRiskClass">{{ currentRiskLabel }}</div>
+    <div class="score-percentile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>{{ currentPercentile }}</div>
+  </div>
+  <div class="chart-container"><div ref="chartGauge" style="width:100%;height:180px;"></div></div>
+  <div class="score-distribution">
+    <div class="sd-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-5"/></svg>风险等级分布</div>
+    <div class="sd-bars">
+      <div v-for="(level, idx) in currentScale.riskLevels" :key="idx" class="sd-bar-group">
+        <div v-if="currentRiskIndex === idx" class="sd-you-marker">你在这里</div>
+        <div class="sd-bar" :class="['b'+(idx+1), {['sd-bar-current']: currentRiskIndex === idx}]" :style="{height: level.pct + '%'}"></div>
+        <div class="sd-label"><span class="pct">{{ level.pct }}%</span></div>
+      </div>
+    </div>
+    <div class="sd-x-labels"><div v-for="(level, idx) in currentScale.riskLevels" :key="idx">{{ level.range }}<br>{{ level.label }}</div></div>
+  </div>
+  <div class="risk-cards">
+    <div v-for="(level, idx) in currentScale.riskLevels" :key="idx" class="risk-card" :class="{current: currentRiskIndex === idx}">
+      <div class="rc-bar" :style="{background: level.color}"></div>
+      <span class="rc-label">{{ level.label }}</span>
+      <span class="rc-range" :style="{color: level.color}">{{ level.range }} 分</span>
+      <span v-if="currentRiskIndex === idx" style="color:var(--primary);margin-left:auto;font-weight:700;">你在这里</span>
+      <span v-else style="color:var(--muted);margin-left:auto;">{{ level.population }}</span>
+    </div>
+  </div>
+  <div class="report-conclusion" :style="{borderLeftColor: currentRiskColor}">{{ currentResultDesc }}</div>
+  <div style="height:8px;background:var(--bg);"></div>
+  <div class="report-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>逐条得分明细</div>
+  <div v-for="(q, idx) in questions" :key="'item'+idx" class="item-card">
+    <div class="item-num">{{ idx+1 }}</div>
+    <div class="item-body"><div class="item-label">{{ q.text }}</div>
+      <div class="item-bar-row">
+        <div v-for="(opt, oi) in q.options" :key="oi" class="seg"
+             :class="opt.value <= (answers[q.id] !== undefined ? q.options[answers[q.id]].value : -1) ? 'f' + opt.value : ''"></div>
+      </div>
+    </div>
+    <span class="item-score-badge" :class="'is' + (answers[q.id] !== undefined ? q.options[answers[q.id]].value : 0)">{{ answers[q.id] !== undefined ? q.options[answers[q.id]].value : 0 }} · {{ answers[q.id] !== undefined ? q.options[answers[q.id]].label : '未作答' }}</span>
+  </div>
+  <div class="item-legend">
+    <span v-for="(opt, oi) in questions[0].options" :key="'leg'+oi" class="li">
+      <span class="li-dot" :style="{background: 'var(--leg' + (oi % 5) + ', var(--rule))'}"></span>{{ opt.value }} {{ opt.label }}
+    </span>
+  </div>
+  <div style="height:8px;background:var(--bg);"></div>
+    <div class="report-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1"/></svg>深度报告</div>
+    <div class="deep-card"><div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg><h4>个性化建议</h4></div><div class="deep-text">{{ currentAdvice }}</div></div>
+    <div class="deep-card" v-if="currentTechniques.length"><div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><h4>{{ currentScale.techniqueTitle }}</h4></div>
+      <div v-for="(tech, idx) in currentTechniques" :key="'tech'+idx" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--rule);">
+        <div style="font-size:13px;font-weight:700;">{{ idx+1 }}. {{ tech.name }}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">{{ tech.steps }}</div>
+      </div>
+    </div>
+    <div class="deep-card" v-if="currentPlan.length"><div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><h4>7天行动计划</h4></div>
+      <div v-for="(item, idx) in currentPlan" :key="'plan'+idx" style="display:flex;gap:10px;margin-top:8px;">
+        <div style="width:24px;height:24px;border-radius:50%;background:var(--secondary);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ idx+1 }}</div>
+        <div style="font-size:13px;line-height:1.6;"><strong>{{ item.day }}</strong> — {{ item.task }}</div>
+      </div>
+    </div>
+    <div class="deep-card" v-if="currentSelfHelp"><div class="deep-icon-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg><h4>自助指南</h4></div><div class="deep-text" style="white-space:pre-line;">{{ currentSelfHelp }}</div></div>
+    <div class="action-bar">
+      <button class="action-btn secondary" @click="shareReport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>分享</button>
+      <button class="action-btn primary" @click="closeResult"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重新测评</button>
+    </div>
+  </template>
+  <div v-else class="locked-section"><div class="lock-content">
+    <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <h4>完整报告已锁定</h4>
+    <p>{{ currentScale.lockDesc }}</p>
+    <button class="unlock-btn" @click="openPasswordModal(currentScaleType)">输入体验码解锁</button>
+  </div></div>
+  <div class="hotline-box" v-if="currentScaleType === 'phq9' || currentScaleType === 'gad7'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <span>心理援助热线: <span class="hotline-num">400-161-9995</span></span>
+  </div>
+</div>
+
+<!-- ===== Password Modal ===== -->
+<div v-if="passwordModal.show" class="modal-overlay" @click.self="closePasswordModal">
+  <div class="dialog-modal" style="position:relative;">
+    <div class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <h3>输入体验码</h3>
+    <p class="modal-desc">输入体验码解锁 {{ getScaleName(passwordModal.scaleId) }} 完整报告</p>
+    <input v-model="passwordModal.input" class="modal-input" :class="{error: passwordModal.error}"
+           type="text" placeholder="请输入体验码" maxlength="20"
+           @keyup.enter="verifyPassword" />
+    <div v-if="passwordModal.error" class="modal-error">{{ passwordModal.error }}</div>
+    <button class="modal-btn" @click="verifyPassword">确认解锁</button>
+    <p class="modal-hint">体验码请联系管理员获取</p>
+  </div>
+</div>
+
+</div>
+</div>
+<script>
+// ===== Scale Data =====
+const BIGFIVE_DATA = [
+  [1,'我是派对上的灵魂人物','extraversion',false],
+  [2,'不太关心他人感受','agreeableness',true],
+  [3,'总是做好准备','conscientiousness',false],
+  [4,'容易感到压力','emotional_stability',true],
+  [5,'词汇量丰富','openness',false],
+  [6,'话不多','extraversion',true],
+  [7,'对人感兴趣','agreeableness',false],
+  [8,'物品随处乱放','conscientiousness',true],
+  [9,'大部分时间都很放松','emotional_stability',false],
+  [10,'难以理解抽象概念','openness',true],
+  [11,'与人相处感到自在','extraversion',false],
+  [12,'侮辱他人','agreeableness',true],
+  [13,'注重细节','conscientiousness',false],
+  [14,'容易担忧','emotional_stability',true],
+  [15,'有生动的想象力','openness',false],
+  [16,'喜欢待在幕后','extraversion',true],
+  [17,'同情他人的感受','agreeableness',false],
+  [18,'把事情搞得一团糟','conscientiousness',true],
+  [19,'很少感到忧郁','emotional_stability',false],
+  [20,'对抽象概念不感兴趣','openness',true],
+  [21,'主动与人交谈','extraversion',false],
+  [22,'对他人的问题不关心','agreeableness',true],
+  [23,'立即完成家务事','conscientiousness',false],
+  [24,'容易心烦意乱','emotional_stability',true],
+  [25,'有很棒的想法','openness',false],
+  [26,'没什么话说','extraversion',true],
+  [27,'心地柔软/善良','agreeableness',false],
+  [28,'常忘记把东西放回原位','conscientiousness',true],
+  [29,'容易沮丧','emotional_stability',true],
+  [30,'想象力不好','openness',true],
+  [31,'在聚会上与很多人交谈','extraversion',false],
+  [32,'对他人不太真正关心','agreeableness',true],
+  [33,'喜欢秩序','conscientiousness',false],
+  [34,'情绪变化大','emotional_stability',true],
+  [35,'理解事物很快','openness',false],
+  [36,'不喜欢引起他人注意','extraversion',true],
+  [37,'为他人腾出时间','agreeableness',false],
+  [38,'逃避职责','conscientiousness',true],
+  [39,'情绪波动频繁','emotional_stability',true],
+  [40,'我倾向于在日常交流中使用较复杂或不常见的词汇','openness',false],
+  [41,'不介意成为关注的焦点','extraversion',false],
+  [42,'感受他人的情绪','agreeableness',false],
+  [43,'遵守日程安排','conscientiousness',false],
+  [44,'容易烦躁','emotional_stability',true],
+  [45,'花时间思考事物','openness',false],
+  [46,'在陌生人面前安静','extraversion',true],
+  [47,'相信他人的好意','agreeableness',false],
+  [48,'做事有条理','conscientiousness',false],
+  [49,'经常感到忧郁','emotional_stability',true],
+  [50,'对哲学讨论不感兴趣','openness',true],
+];
+const PSS10_DATA = [
+  [1,'因为发生意料之外的事情而感到心烦意乱','distress',false],
+  [2,'感到无法控制生活中重要的事情','distress',false],
+  [3,'感到紧张和"压力"','distress',false],
+  [4,'成功地处理了恼人的生活琐事','coping',true],
+  [5,'感到自己能够有效地应对生活中的重要变化','coping',true],
+  [6,'对自己处理个人问题的能力感到没有信心','distress',false],
+  [7,'感到事情按照自己喜欢的方式发展','coping',true],
+  [8,'发现自己无法应对所有必须做的事情','distress',false],
+  [9,'能够控制生活中恼人的事情','coping',true],
+  [10,'感到困难积累得太多，无法克服','distress',false],
+];
+const RSES_DATA = [
+  [1,'我感到自己是一个有价值的人，至少与其他人在同一水平上','positive',false],
+  [2,'我感到自己有许多好的品质','positive',false],
+  [3,'归根结底，我倾向于觉得自己是一个失败者','negative',true],
+  [4,'我能像大多数人一样把事情做好','positive',false],
+  [5,'我觉得自己值得自豪的地方不多','negative',true],
+  [6,'我对自己持有肯定的态度','positive',false],
+  [7,'总的来说，我对自己是满意的','positive',false],
+  [8,'我希望我能为自己赢得更多尊重','negative',true],
+  [9,'我确实时常感到自己毫无用处','negative',true],
+  [10,'我时常觉得自己一无是处','negative',true],
+];
+const PHQ9_DATA = [
+  [1,'做事时提不起劲或没有兴趣','emotional',false],
+  [2,'感到心情低落、沮丧或绝望','emotional',false],
+  [3,'入睡困难、睡不安稳或睡眠过多','somatic',false],
+  [4,'感觉疲倦或没有活力','somatic',false],
+  [5,'食欲不振或暴饮暴食','somatic',false],
+  [6,'觉得自己很糟——或觉得自己很失败，或让家人失望','emotional',false],
+  [7,'对事物专注有困难（例如阅读、看电视或工作学习时）','somatic',false],
+  [8,'动作或说话速度缓慢——以至于别人都已经察觉；或正好相反——烦躁或坐立不安，比平常更动来动去','somatic',false],
+  [9,'有不如死掉或者用某种方式伤害自己的念头','emotional',false],
+  [10,'感到未来没有希望','emotional',false],
+  [11,'感到自己没有价值或不值得被爱','emotional',false],
+  [12,'容易哭泣或想哭','emotional',false],
+  [13,'对以往感兴趣的活动失去兴趣或乐趣','emotional',false],
+  [14,'难以做出日常决定（如穿什么、吃什么）','somatic',false],
+  [15,'感到身体沉重或不灵活','somatic',false],
+  [16,'睡眠质量差，早上醒得过早','somatic',false],
+  [17,'经常感到头痛、胸闷或身体不适（医学检查无明显原因）','somatic',false],
+  [18,'回避社交活动，不想见人','emotional',false],
+  [19,'容易感到烦躁或发脾气','emotional',false],
+  [20,'感到内心空虚或麻木','emotional',false],
+];
+const GAD7_DATA = [
+  [1,'感到紧张、焦虑或急躁','emotional',false],
+  [2,'无法停止或控制担忧','emotional',false],
+  [3,'对各种各样的事情担忧过多','emotional',false],
+  [4,'很难放松下来','physical',false],
+  [5,'坐立不安，很难安静坐着','physical',false],
+  [6,'容易变得烦躁或易怒','emotional',false],
+  [7,'感到害怕，好像有可怕的事情会发生','emotional',false],
+  [8,'注意力难以集中，脑子一片空白','emotional',false],
+  [9,'反复回想不愉快的往事或担忧未来','emotional',false],
+  [10,'感到头晕或不稳','physical',false],
+  [11,'手心出汗或发抖','physical',false],
+  [12,'心跳加速或心慌','physical',false],
+  [13,'感到呼吸困难或胸闷','physical',false],
+  [14,'胃部不适、恶心或消化不良','physical',false],
+  [15,'肌肉紧绷，尤其是肩颈部位','physical',false],
+  [16,'入睡困难或睡眠浅而易醒','physical',false],
+  [17,'对社交场合感到紧张不安','emotional',false],
+  [18,'总觉得有什么不好的事要发生','emotional',false],
+  [19,'容易被突然的声音吓到','emotional',false],
+  [20,'感到疲惫无力，即使没做太多事情','emotional',false],
+];
+
+// ===== Options =====
+const BIGFIVE_OPTIONS = [
+  {label:'非常不准确',value:1},{label:'比较不准确',value:2},
+  {label:'不确定',value:3},{label:'比较准确',value:4},{label:'非常准确',value:5},
+];
+const PSS10_OPTIONS = [
+  {label:'从不',value:0},{label:'偶尔',value:1},{label:'有时',value:2},
+  {label:'时常',value:3},{label:'经常',value:4},
+];
+const RSES_OPTIONS = [
+  {label:'非常不符合',value:1},{label:'不符合',value:2},
+  {label:'符合',value:3},{label:'非常符合',value:4},
+];
+const PHQ9_OPTIONS = [
+  {label:'完全没有',value:0},{label:'几天',value:1},
+  {label:'一半以上的天数',value:2},{label:'几乎每天',value:3},
+];
+const GAD7_OPTIONS = PHQ9_OPTIONS;
+
+// ===== Dimension Maps =====
+const BIGFIVE_DIMENSION_MAP = {
+  extraversion:'外向性',agreeableness:'宜人性',conscientiousness:'严谨性',
+  emotional_stability:'情绪稳定性',openness:'开放性',
+};
+const BIGFIVE_DIMENSION_ORDER = ['extraversion','agreeableness','conscientiousness','emotional_stability','openness'];
+const BIGFIVE_NORM = {extraversion:30,agreeableness:33,conscientiousness:31,emotional_stability:29,openness:32};
+const PSS10_DIMENSION_MAP = {
+  distress:{label:'压力感受',desc:'反映你感知到的无助感和失控感，分数越高表示压力感受越强烈',maxScore:24},
+  coping:{label:'应对效能',desc:'反映你应对压力的信心和能力，分数越高表示应对能力越强',maxScore:16},
+};
+const RSES_DIMENSION_MAP = {
+  positive:{label:'正向自尊',desc:'反映你对自我价值的积极认知，分数越高表示自我认同感越强',maxScore:20},
+  negative:{label:'负向自尊',desc:'反映自我否定的程度（反向计分后），分数越高表示自我接纳程度越好',maxScore:20},
+};
+const PHQ9_DIMENSION_MAP = {
+  emotional:{label:'情绪症状',desc:'反映情绪低落、兴趣减退、自我否定、无望感等心理症状',maxScore:30},
+  somatic:{label:'躯体症状',desc:'反映睡眠、食欲、疲劳、注意力、身体不适等躯体化症状',maxScore:30},
+};
+const GAD7_DIMENSION_MAP = {
+  emotional:{label:'情绪焦虑',desc:'反映紧张、担忧、恐惧、注意力不集中等情绪层面的焦虑症状',maxScore:36},
+  physical:{label:'躯体焦虑',desc:'反映放松困难、坐立不安、心悸、肌肉紧绷等躯体层面的焦虑症状',maxScore:24},
+};
+
+// ===== Scale Configuration =====
+const SCALE_CONFIG = {
+  bigfive:{
+    type:'bigfive',title:'大五人格测试',subtitle:'IPIP-50 国际通用人格量表',
+    iconClass:'icon-blue',iconPath:'<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 12 4.5"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2"/>',
+    questions:50,duration:8,audience:'全年龄段',
+    reliability:'信效度良好',
+    reliabilityText:'IPIP-50 是大五人格特质的国际标准化测量工具，由 Goldberg (1992) 开发，在国内外研究中广泛使用，Cronbach α 系数在 0.77~0.91 之间，具有良好信效度。',
+    alpha:'α=0.83',
+    reference:'Goldberg, L. R. (1992). The development of markers for the Big-Five factor structure. Psychological Assessment, 4(1), 26-42.',
+    disclaimer:'本测评为自我认知工具，非临床诊断。结果仅供参考，如有心理困扰请寻求专业帮助。',
+    lockDesc:'测评结果 · 五维轮廓 · 深度报告 · 行动指南',
+    color:'#5b7a9c',colorDark:'#3f5670',shortName:'IPIP-50',maxScore:50,
+    category:'personality',riskLevels:[],techniqueTitle:'',
+  },
+  pss10:{
+    type:'pss10',title:'压力知觉量表',subtitle:'PSS-10 Cohen等(1983)',
+    iconClass:'icon-amber',iconPath:'<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+    questions:10,duration:3,audience:'全年龄段',
+    reliability:'信效度良好',
+    reliabilityText:'PSS-10 由 Cohen 等人 (1983) 开发，是测量压力知觉最广泛使用的量表之一。中文版 Cronbach α 系数为 0.78~0.85，具有良好的信效度。',
+    alpha:'α=0.85',
+    reference:'Cohen, S., Kamarck, T., & Mermelstein, R. (1983). A global measure of perceived stress. Journal of Health and Social Behavior, 24(4), 385-396.',
+    disclaimer:'本量表测量你过去一个月内对压力的感知，非临床诊断工具。如有长期压力困扰，建议寻求专业帮助。',
+    lockDesc:'测评结果 · 风险分布 · 个性化建议 · 减压技巧 · 7天行动计划',
+    color:'#d4a648',colorDark:'#b8902e',shortName:'PSS-10',maxScore:40,
+    category:'stress',
+    riskLevels:[
+      {label:'压力较低',range:'0-13',color:'#6b8f6e',pct:40,population:'约40%'},
+      {label:'压力适中',range:'14-26',color:'#d4a648',pct:50,population:'约50%'},
+      {label:'压力较高',range:'27-40',color:'#c47b6b',pct:10,population:'约10%'},
+    ],
+    techniqueTitle:'减压技巧',
+  },
+  rses:{
+    type:'rses',title:'自尊量表',subtitle:'RSES Rosenberg(1965)',
+    iconClass:'icon-green',iconPath:'<path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/>',
+    questions:10,duration:3,audience:'全年龄段',
+    reliability:'信效度良好',
+    reliabilityText:'RSES 由 Rosenberg (1965) 开发，是测量自尊水平最常用的量表。中文版 Cronbach α 系数为 0.77~0.88，具有良好的信效度。',
+    alpha:'α=0.88',
+    reference:'Rosenberg, M. (1965). Society and the adolescent self-image. Princeton University Press.',
+    disclaimer:'本量表测量你的自尊水平，非临床诊断工具。如持续感到自我否定，建议寻求专业帮助。',
+    lockDesc:'测评结果 · 风险分布 · 个性化建议 · 自尊练习 · 成长计划',
+    color:'#6b8f6e',colorDark:'#4f7052',shortName:'RSES',maxScore:40,
+    category:'self',
+    riskLevels:[
+      {label:'自尊偏低',range:'0-20',color:'#c47b6b',pct:15,population:'约15%'},
+      {label:'自尊中等',range:'21-30',color:'#d4a648',pct:35,population:'约35%'},
+      {label:'自尊较高',range:'31-40',color:'#6b8f6e',pct:50,population:'约50%'},
+    ],
+    techniqueTitle:'自尊提升练习',
+  },
+  phq9:{
+    type:'phq9',title:'抑郁情绪筛查',subtitle:'PHQ-扩展版 20题',
+    iconClass:'icon-purple',iconPath:'<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+    questions:20,duration:4,audience:'全年龄段',
+    reliability:'信效度良好',
+    reliabilityText:'本量表基于 PHQ-9（Pfizer 公共领域）扩展开发，涵盖情绪症状与躯体症状两大维度共 20 题，能够更全面地评估抑郁情绪状态。原版 PHQ-9 的 Cronbach α 系数为 0.86~0.89。',
+    alpha:'α=0.89',
+    reference:'Kroenke, K., Spitzer, R. L., & Williams, W. (2001). The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med, 16(9), 606-613.',
+    disclaimer:'本量表仅用于情绪筛查，不能替代专业诊断。如持续感到痛苦或有自伤念头，请立即拨打心理援助热线 400-161-9995。',
+    lockDesc:'测评结果 · 风险分布 · 个性化建议 · 情绪调节技巧 · 7天行动计划',
+    color:'#8a7ab8',colorDark:'#6b5c9c',shortName:'PHQ-20',maxScore:60,
+    category:'mood',
+    riskLevels:[
+      {label:'抑郁较轻',range:'0-9',color:'#6b8f6e',pct:50,population:'约50%'},
+      {label:'轻度抑郁',range:'10-19',color:'#d4a648',pct:25,population:'约25%'},
+      {label:'中度抑郁',range:'20-29',color:'#e89547',pct:15,population:'约15%'},
+      {label:'抑郁较重',range:'30-60',color:'#c47b6b',pct:10,population:'约10%'},
+    ],
+    techniqueTitle:'情绪调节技巧',
+  },
+  gad7:{
+    type:'gad7',title:'焦虑情绪筛查',subtitle:'GAD-扩展版 20题',
+    iconClass:'icon-red',iconPath:'<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/><path d="M8.5 8.5l.01 0"/><path d="M15.5 8.5l.01 0"/>',
+    questions:20,duration:4,audience:'全年龄段',
+    reliability:'信效度良好',
+    reliabilityText:'本量表基于 GAD-7（Spitzer 等, 2006, 公共领域）扩展开发，涵盖情绪焦虑与躯体焦虑两大维度共 20 题，能够更全面地评估焦虑情绪状态。原版 GAD-7 的 Cronbach α 系数为 0.89~0.92。',
+    alpha:'α=0.92',
+    reference:'Spitzer, R. L., Kroenke, K., Williams, J. B., & Löwe, B. (2006). A brief measure for assessing generalized anxiety disorder: the GAD-7. Arch Intern Med, 166(10), 1092-1097.',
+    disclaimer:'本量表仅用于情绪筛查，不能替代专业诊断。如持续感到焦虑或恐慌，请寻求专业帮助。',
+    lockDesc:'测评结果 · 风险分布 · 个性化建议 · 焦虑缓解技巧 · 7天行动计划',
+    color:'#c47b6b',colorDark:'#a85a4a',shortName:'GAD-20',maxScore:60,
+    category:'mood',
+    riskLevels:[
+      {label:'焦虑较轻',range:'0-9',color:'#6b8f6e',pct:60,population:'约60%'},
+      {label:'轻度焦虑',range:'10-19',color:'#d4a648',pct:20,population:'约20%'},
+      {label:'中度焦虑',range:'20-29',color:'#e89547',pct:12,population:'约12%'},
+      {label:'焦虑较重',range:'30-60',color:'#c47b6b',pct:8,population:'约8%'},
+    ],
+    techniqueTitle:'焦虑缓解技巧',
+  },
+};
+
+// ===== Dimension Insights (Big Five) =====
+const DIMENSION_INSIGHTS = {
+  extraversion:{high:{level:'高外向性',desc:'你是一个充满活力和热情的人。你喜欢与人交往，在社交场合中感到自在，善于表达自己的想法和感受。你精力充沛，喜欢成为关注的焦点，能够轻松地与他人建立联系。',tags:['社交达人','精力充沛','健谈自信','热爱聚会'],action:'每周安排2-3次社交活动，但也要刻意留出独处时间充电。在团队中主动承担沟通协调角色，同时练习"深度倾听"——对话时放下手机，专注对方表达的内容和情绪，而非急于回应。',growth:'尝试在社交中从"量"转向"质"，培养2-3个深度的友谊而非广泛的社交圈。学习独处的艺术，每天安排15-30分钟的独处时间，通过阅读、冥想或写日记来平衡外向能量。',relationship:'你是朋友圈中的活跃分子，但注意不要在对话中过度主导。练习"提问-倾听-回应"的对话节奏，给内向的朋友更多表达空间。在亲密关系中，学会用安静的方式表达爱意。',career:'适合需要人际互动的岗位：销售、公关、市场营销、教育培训、活动策划。在职场中发挥你的沟通优势，但注意在需要深度思考和独立完成的工作中也要保持专注。'},medium:{level:'中等外向性',desc:'你在社交和独处之间找到了良好的平衡。你能够享受社交活动，也重视独处的时间。你既有与人交往的能力，也懂得保持自己的空间。',tags:['平衡社交','适度活跃','善于倾听','独立自主'],action:'根据不同场景灵活切换社交与独处模式。工作日主动参与1-2次团队协作，周末保留半天独处时间。记录一周内哪些社交让你能量增加、哪些让你疲惫，据此优化社交结构。',growth:'明确你的"社交能量阈值"——大概多少人际互动后会感到疲惫，据此提前规划充电时间。尝试每月挑战一次略超出舒适区的社交场合（如行业活动、兴趣社群）。',relationship:'你兼具外向和内向的特质，是很好的"社交桥梁"。在朋友圈中可以主动连接不同圈层的人。在亲密关系中，既保持分享的习惯，也学会给彼此独立空间。',career:'适合需要灵活沟通的岗位：项目管理、客户经理、产品运营、咨询顾问。你的平衡性使你能适应团队协作与独立工作两种模式，注意在两种模式间合理分配时间。'},low:{level:'低外向性',desc:'你是一个内敛、安静的人。你更喜欢独处或与少数亲密的人相处，在社交场合中倾向于观察而非主动参与。你善于反思，内心世界丰富，注重深度而非广度。',tags:['内向安静','善于反思','谨慎保守','深度思考'],action:'不必强迫自己变得外向，而是有策略地扩大舒适区。每周选择1次小型（2-4人）的社交场合参与，提前准备2-3个可聊的话题。会后记录哪些互动是愉快的，建立正向反馈。',growth:'接纳自己内向的特质，这是优势而非缺陷。通过写作、深度阅读、一对一深谈等方式发挥你的深度思考优势。每年挑战1次需要公开表达的场景（如做一次分享），逐步拓展边界。',relationship:'你重视少数深度的关系，这是珍贵的品质。主动维护2-3段核心友谊，每月至少深度交流一次。在社交场合中，可以扮演"倾听者"角色，这同样受人欢迎。亲密关系中，用文字表达感受也是一种好方式。',career:'适合需要深度专注的岗位：研发、设计、写作、数据分析、财务。在职场中你适合独立完成任务，但也要刻意练习基本的汇报和会议发言能力，确保工作成果被看见。'}},
+  agreeableness:{high:{level:'高宜人性',desc:'你是一个善良、体贴、富有同情心的人。你真诚地关心他人，乐于助人，相信人性本善。你善于合作，重视和谐的人际关系，能够理解和共情他人的感受。',tags:['善良体贴','乐于助人','信任他人','合作友善'],action:'设立"友善边界日"——每周选1天练习说"不"。遇到请求时先回应"我需要考虑一下"，给自己24小时评估是否真的有余力。记录本周因无法拒绝而承担的额外事项，分析其中的成本。',growth:'区分"善良"与"讨好"——真正的善良建立在自我尊重之上。学习识别自己的需求并清晰表达，每月至少主动提出1次自己的诉求。阅读《边界感》相关书籍，建立健康的心理边界。',relationship:'你的同理心是宝贵财富，但注意不要在关系中过度付出而累积委屈。定期觉察：这段关系是否双向流动？在亲密关系中，学会直接表达不满而非默默忍受，避免情绪积压后的爆发。',career:'适合需要关怀协作的岗位：人力资源、医护、教育、客户服务、社工。你的合作精神是团队润滑剂，但注意在绩效考核、谈判等需要维护立场的场合，要敢于为自己的成果和利益发声。'},medium:{level:'中等宜人性',desc:'你在关心他人和照顾自己之间保持着合理的平衡。你愿意帮助他人，但也懂得保护自己的边界。你是一个务实而有同理心的人。',tags:['务实同理','适度信任','边界清晰','合作务实'],action:'保持你善良与理性的平衡。每周复盘1次：本周哪些情况下我过于迁就？哪些情况下我过于强硬？找到中间的"温和而坚定"的表达方式，并记录下来作为模板。',growth:'你的平衡是优势，但仍可深化——在关心他人时多问一句"对方真正需要什么"，而非自动给予。在维护自己时，学习用"我"句式表达需求（如"我需要…"），而非指责或退让。',relationship:'你能在关心他人和保护自己间找到平衡，是关系中的稳定力量。在朋友圈中，你可以成为调解者。在亲密关系中，继续保持坦诚沟通，遇到分歧时聚焦问题本身而非人身评价。',career:'适合需要平衡多方利益的岗位：项目管理、运营、商务、行政。你的务实和同理心使你能处理好协作与目标的张力，在需要原则性决策时也敢于表态，注意保持这一平衡。'},low:{level:'低宜人性',desc:'你是一个独立、务实、以目标为导向的人。你不太容易被他人影响，更关注自己的需求和目标。你可能对他人的感受不太敏感，但这使你在竞争中更有优势。',tags:['独立务实','目标导向','理性冷静','竞争性强'],action:'每周刻意练习1次"先共情再表达"的沟通：在提出自己的观点或质疑前，先用一句话复述对方的立场和感受（如"我理解你希望…"），再陈述你的看法。观察对方的反应变化。',growth:'你的独立和目标是优势，但人际关系中的"软实力"同样值得投资。每月阅读1本关于沟通或情商的书籍，学习识别他人情绪信号。尝试在1个非功利场景下主动帮助他人，体验纯粹的联结。',relationship:'你的直接和理性有时会被误解为冷漠。在重要关系中，刻意增加"情感确认"的表达——即使你不同意，也可以说"我理解这对你很重要"。给亲密的人定期表达感谢和欣赏。',career:'适合需要目标导向的岗位：创业者、投资人、法务、审计、战略规划。你的理性使你在竞争和决策中占优，但注意在团队中适当展现人情味，定期认可同事的贡献，避免成为"难合作的人"。'}},
+  conscientiousness:{high:{level:'高严谨性',desc:'你是一个高度自律、有条理、负责任的人。你做事认真细致，善于规划和执行，总是按时完成任务。你的可靠性和高效率使你在工作和生活中都表现出色。',tags:['自律高效','条理清晰','尽职尽责','可靠信任'],action:'每周日花20分钟规划下周的3个核心任务，按优先级排序。每天早晨用5分钟确认当日最重要的一件事。但也要刻意安排"弹性时间块"（每天1小时）应对突发，避免计划被打乱时产生焦虑。',growth:'警惕"完美主义"陷阱——区分任务的关键与次要，对次要事项允许"足够好"而非"完美"。每月刻意留1天不安排任何计划，练习与"失控感"共处，培养对不确定性的容忍度。',relationship:'你的可靠让伴侣和朋友安心，但高标准可能给身边人压力。在亲密关系中，区分"我的标准"和"对方的标准"，不把自己的秩序感强加于人。学会欣赏伴侣"随性"带来的轻松氛围。',career:'适合需要严谨规划的岗位：项目管理、财务、运营、工程、科研、法律。你的高执行力是核心竞争力，但注意授权——把次要任务交给他人，避免因事必躬亲而成为瓶颈，影响团队成长。'},medium:{level:'中等严谨性',desc:'你在有序和灵活之间找到了良好的平衡。你能够保持必要的组织和规划，同时也懂得适应变化和享受生活中的随意。',tags:['平衡有序','灵活适应','合理规划','责任适度'],action:'为重要但不紧急的事建立"最小习惯"——如每周固定1小时处理。使用2分钟法则处理小任务（2分钟能做完的立即做）。每月底回顾完成率，找出经常拖延的任务类型并分析原因。',growth:'你的平衡是优势，可在关键领域深化专注。选择1个本季度最重要的目标，用OKR方式拆解为月度和周度里程碑。练习"单任务专注"，工作时关闭非必要通知，提升深度工作能力。',relationship:'你能在秩序与随性间切换，是关系中的稳定与趣味并存者。在亲密关系中，对于重要的约定（如纪念日、家庭事务）建立提醒机制，既保持灵活也不遗漏关键事项。',career:'适合需要平衡执行与灵活的岗位：产品、运营、市场、咨询、职能管理。你的适应性使你能应对变化，在关键项目上建议建立更明确的里程碑和复盘机制，进一步提升交付的确定性。'},low:{level:'低严谨性',desc:'你是一个随性、灵活、不拘小节的人。你喜欢自由自在地生活，不喜欢被严格的计划约束。你善于即兴发挥，适应性强，在变化中能找到机会。',tags:['随性自由','灵活变通','不拘小节','即兴创造'],action:'从"外部结构"入手弥补内部规划不足——使用日历和待办工具，每天列出3件必做事项。设置明确的截止时间和外部监督（如与伙伴约定每周互查进度）。先从1个领域（如工作）建立习惯，再扩展。',growth:'不要试图一夜变得自律，而是识别你的"高效时段"（如早晨）并将重要任务安排在此。理解你的灵活性是优势，需搭配"最小可行结构"——即最少的规则保证关键事项不遗漏，而非全面改造。',relationship:'你的随性带来轻松氛围，但可能在重要承诺上让伴侣不安。对关键事项（如约定时间、共同财务）建立简单可靠的提醒机制。在亲密关系中，对伴侣的"秩序需求"给予尊重，而非视为束缚。',career:'适合需要灵活创意的岗位：创意设计、内容创作、创业早期、活动策划、艺术。你的灵活性在变化中是优势，但建议与一位高严谨性的伙伴搭档，互补完成规划与执行的闭环。在交付环节建立检查清单，减少遗漏。'}},
+  emotional_stability:{high:{level:'高情绪稳定性',desc:'你是一个沉着、冷静、情绪稳定的人。你能够有效管理压力和负面情绪，面对挑战时保持镇定。你的情绪韧性使你能够从容应对生活中的起伏。',tags:['沉着冷静','情绪韧性','压力管理','从容应对'],action:'你的稳定是稀缺资源，可主动承担"定海神针"角色。每周记录1次你成功化解压力的具体案例，总结可复用的方法。同时留意"过度稳定"是否让你回避了必要的情绪表达，刻意在信任的人面前分享一次感受。',growth:'稳定的反面可能是"情感隔离"——定期检查你是否在用理性压制未处理的情绪。每月进行1次情绪盘点：近期是否有被忽略的不安或悲伤？学习在不影响判断的前提下，允许自己感受并表达脆弱。',relationship:'你的情绪稳定给伴侣安全感，但避免成为"情感绝缘体"。在亲密关系中，主动分享你的担忧和喜悦，让伴侣感受到被需要。当伴侣情绪波动时，先共情再给建议，而非急于"解决问题"。',career:'适合高压岗位：危机管理、急诊、高管、创业、交易员、航空。你的抗压能力是核心竞争力，在团队中可承担压力缓冲的角色。注意识别长期高压的累积信号，定期安排真正的休息，避免"硬撑"导致的隐性耗竭。'},medium:{level:'中等情绪稳定性',desc:'你能够处理大部分情绪挑战，但在某些压力情境下可能会感到焦虑。你对自己的情绪有较好的觉察，正在不断学习更好的应对方式。',tags:['情绪觉察','适度焦虑','应对学习','稳定发展'],action:'识别你的"压力触发情境"——用1周时间记录让你焦虑的3类场景。针对每类准备1个应对工具（如深呼吸、暂停3秒、写下来）。每天睡前花3分钟做正念呼吸练习，逐步提升情绪基线的稳定度。',growth:'你的觉察力是成长的起点。学习区分"事实"与"对事实的解读"——很多焦虑来自后者。每月阅读1本情绪管理书籍并实践1个技巧。建立"情绪急救包"清单：列出5件能快速让你平静的具体行动。',relationship:'你能在大部分时候保持情绪平衡，但在压力下可能变得急躁。在亲密关系中，设立"情绪暂停"信号——感到上头时主动说"我需要10分钟"，避免在情绪高点说出伤人的话。事后主动复盘和修复。',career:'适合中等压力的岗位：大多数职能岗、中层管理、专业服务。你的情绪调节能力足以应对日常工作，建议针对你的高焦虑场景（如汇报、冲突对话）做专项练习，如提前演练、结构化准备，进一步提升稳定性。'},low:{level:'低情绪稳定性',desc:'你是一个情感丰富、敏感细腻的人。你对环境和他人的情绪有很强的感知力，但同时也更容易受到负面情绪的影响。你的敏感性是你创造力和同理心的源泉。',tags:['情感丰富','敏感细腻','创造共情','需要支持'],action:'建立每日情绪锚点练习：晨起5分钟正念呼吸，睡前写3行情绪日记（今天的情绪、触发事件、我的应对）。遇到情绪波动时使用"478呼吸法"（吸气4秒、屏息7秒、呼气8秒）快速平复。坚持21天形成习惯。',growth:'你的敏感是双刃剑——它既是创造力和共情的源泉，也带来情绪负担。学习"情绪命名"技巧，精准描述感受（如"我感到被忽视"而非"我很难受"），这能降低情绪强度。考虑寻求专业心理咨询支持，这是积极的选择。',relationship:'你丰富的情感能深化亲密关系，但情绪波动可能让伴侣疲惫。提前与伴侣沟通你的情绪模式和高敏触发点，共同约定应对方式（如"我难过时需要拥抱而非建议"）。避免在情绪低谷做重要关系决定。',career:'适合情感价值导向的岗位：艺术创作、写作、心理咨询、用户体验、人文研究。你的敏感性在需要共情和创造的领域是优势。在职场中，建立压力管理和情绪边界的工作习惯，避免情绪耗竭，必要时寻求督导或支持。'}},
+  openness:{high:{level:'高开放性',desc:'你是一个富有好奇心、想象力和创造力的人。你喜欢探索新事物，乐于接受挑战，对艺术、文化和抽象概念有深厚的兴趣。你的开放思维使你成为创新者和终身学习者。',tags:['好奇心强','富有创造','艺术兴趣','开放思维'],action:'将好奇心转化为产出——每月完成1个"探索项目"（学一项新技能、读一个新领域的书、尝试一种新艺术形式）。建立"灵感笔记本"，随时记录想法并定期回顾。同时练习"完成力"，对每个项目设定明确的完成节点。',growth:'你的开放是创新的源泉，但警惕"浅尝辄止"——在广度探索之外，选择1-2个最打动你的领域深耕3个月以上，体验从"新鲜"到"精通"的跃迁。学习与务实型伙伴协作，将创意落地为可执行的方案。',relationship:'你的丰富内心和多元兴趣让你是有趣的伴侣，但注意给关系带来稳定性。在亲密关系中，既分享新鲜体验，也建立共同的日常仪式（如固定的晚餐、周末散步）。尊重伴侣可能更偏好熟悉事物的选择。',career:'适合需要创新思维的岗位：设计、研发、产品创新、内容创作、学术研究、战略。你的创造力是核心竞争力，注意在组织中学会"推销"你的想法——用数据和逻辑支撑创意，提升被采纳的概率。'},medium:{level:'中等开放性',desc:'你对新事物保持开放的态度，同时也尊重传统和实用价值。你既能够欣赏艺术和抽象概念，也重视实际和可行的解决方案。',tags:['平衡开放','务实创新','兴趣适中','适应传统'],action:'每月主动接触1个略超出舒适区的新事物（一门课、一种艺术形式、一个新圈子）。在决策中练习"双脑思维"——先用开放发散收集选项，再用务实标准筛选，形成创新与可行的平衡。',growth:'你的平衡是优势，可在关键领域加深探索。选择1个长期感兴趣但未深入的领域，制定3个月的学习计划。同时保持对传统的尊重——理解经典背后的智慧，而非一味求新。',relationship:'你能在新鲜与稳定间找到节奏，是关系中的趣味与安定兼具者。在亲密关系中，定期策划1次"新鲜体验"（新餐厅、新路线、新活动），同时保持核心的日常仪式感，让关系既有惊喜又有安全感。',career:'适合需要平衡创新与落地的岗位：产品经理、市场策划、咨询、教育创新、企业管理。你的适应性使你能连接创意与执行，在团队中常扮演"翻译者"角色，把天马行空的想法转化为可行方案。'},low:{level:'低开放性',desc:'你是一个实际、务实、注重传统的人。你偏好熟悉的事物和明确的方法，不喜欢抽象的理论和不确定的探索。你的可靠性和专注力是你在实际工作中的优势。',tags:['务实传统','注重实际','偏好熟悉','专注可靠'],action:'不必强迫自己追求新奇，而是有策略地小幅扩展。每季度尝试1件略超出习惯的新事（换一条通勤路线、试一家新餐厅、读一本不同领域的书）。记录尝试后的感受，建立"新鲜并不危险"的正向体验库。',growth:'你的务实和专注是珍贵品质，理解"开放性"不等于"善变"。你可以通过"工具性学习"扩展视野——即带着明确的实用目的学习新方法，而非漫无目的的探索。这既符合你的天性，又能稳步拓展能力边界。',relationship:'你的稳定和可靠给伴侣安全感，但避免让关系陷入单调。在亲密关系中，刻意每月安排1次"打破常规"的小举动（哪怕只是换个约会地点）。倾听伴侣的新想法时，先表达欣赏再讨论可行性，而非本能否定。',career:'适合需要专注和可靠的岗位：会计、工程实施、质量管理、运维、行政、传统行业专业岗。你的稳定和执行力是组织运转的基石，在变化中是团队的"锚"。建议定期了解行业新趋势，避免因过度保守而错失发展机会。'}}
+};
+
+// ===== Unlock System (Frontend Hash Verification) =====
+function hashCode(str){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return String(Math.abs(h));}
+const UNLOCK_HASHES={};
+(function(){const codes=['VIP888','RELAX888','LOVE888','HOPE888','CALM888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});})();
+
+// ===== Vue Instance =====
+new Vue({
+  el:'#app',
+  data(){
+    return{
+      scaleStep:'select',
+      currentScaleType:null,
+      activeCategory:'all',
+      questions:[],
+      answers:{},
+      currentQuestionIdx:0,
+      slideDirection:'slide-left',
+      guideAgreed:false,
+      resultScores:{},
+      dimLabelMap:BIGFIVE_DIMENSION_MAP,
+      dimOrder:BIGFIVE_DIMENSION_ORDER,
+      dimNorm:BIGFIVE_NORM,
+      pssTotalScore:0,pssDimensionData:{},
+      rsesTotalScore:0,rsesDimensionData:{},
+      phq9TotalScore:0,phq9DimensionData:{},
+      gad7TotalScore:0,gad7DimensionData:{},
+      unlockedReports:[],
+      passwordModal:{show:false,scaleId:null,input:'',error:''},
+      reportDate:new Date().toLocaleDateString('zh-CN'),
+      touchStartX:0,
+    };
+  },
+  computed:{
+    categories(){return[{key:'all',label:'全部'},{key:'personality',label:'人格'},{key:'mood',label:'情绪'},{key:'stress',label:'压力'},{key:'self',label:'自我'}];},
+    filteredScales(){
+      const all=Object.values(SCALE_CONFIG);
+      if(this.activeCategory==='all')return all;
+      return all.filter(s=>s.category===this.activeCategory);
+    },
+    currentScale(){return SCALE_CONFIG[this.currentScaleType]||SCALE_CONFIG.bigfive;},
+    answeredCount(){return this.questions.filter(q=>this.answers[q.id]!==undefined).length;},
+    currentInstruction(){
+      const map={
+        bigfive:'请根据以下陈述，选择最能描述你当前一般状态（而非你希望成为的样子）的选项，按照你对自己诚实、真实的看法作答。',
+        pss10:'请根据过去一个月内你的感受和想法，选择最符合你情况的选项。这里没有标准答案，请根据你的真实感受作答。',
+        rses:'请根据以下陈述，选择最符合你实际情况的选项。请根据你此刻对自己的感觉来回答，而不是你希望成为的样子。',
+        phq9:'在过去的两周内，你有多常受到以下问题的困扰？请根据你的真实感受选择最符合的选项。这里没有对错答案，请如实作答。',
+        gad7:'在过去的两周内，你有多常受到以下问题的困扰？请根据你的真实感受选择最符合的选项。这里没有对错答案，请如实作答。',
+      };
+      return map[this.currentScaleType]||'';
+    },
+    currentTotalScore(){
+      if(this.currentScaleType==='pss10')return this.pssTotalScore;
+      if(this.currentScaleType==='rses')return this.rsesTotalScore;
+      if(this.currentScaleType==='phq9')return this.phq9TotalScore;
+      if(this.currentScaleType==='gad7')return this.gad7TotalScore;
+      return 0;
+    },
+    currentRiskLabel(){
+      if(this.currentScaleType==='pss10'){const s=this.pssTotalScore;if(s>=27)return'压力较高';if(s>=14)return'压力适中';return'压力较低';}
+      if(this.currentScaleType==='rses'){const s=this.rsesTotalScore;if(s>=31)return'自尊水平高';if(s>=21)return'自尊水平中等';return'自尊水平偏低';}
+      if(this.currentScaleType==='phq9'){const s=this.phq9TotalScore;if(s>=30)return'抑郁情绪较重';if(s>=20)return'中度抑郁情绪';if(s>=10)return'轻度抑郁情绪';return'抑郁情绪较轻';}
+      if(this.currentScaleType==='gad7'){const s=this.gad7TotalScore;if(s>=30)return'焦虑情绪较重';if(s>=20)return'中度焦虑情绪';if(s>=10)return'轻度焦虑情绪';return'焦虑情绪较轻';}
+      return'';
+    },
+    currentRiskClass(){
+      if(this.currentScaleType==='pss10'){const s=this.pssTotalScore;if(s>=27)return'risk-high';if(s>=14)return'risk-medium';return'risk-normal';}
+      if(this.currentScaleType==='rses'){const s=this.rsesTotalScore;if(s>=31)return'risk-normal';if(s>=21)return'risk-medium';return'risk-high';}
+      if(this.currentScaleType==='phq9'){const s=this.phq9TotalScore;if(s>=30)return'risk-high';if(s>=20)return'risk-medium';if(s>=10)return'risk-medium';return'risk-normal';}
+      if(this.currentScaleType==='gad7'){const s=this.gad7TotalScore;if(s>=30)return'risk-high';if(s>=20)return'risk-medium';if(s>=10)return'risk-medium';return'risk-normal';}
+      return'';
+    },
+    currentRiskColor(){
+      if(this.currentScaleType==='pss10'){const s=this.pssTotalScore;if(s>=27)return'#c47b6b';if(s>=14)return'#d4a648';return'#6b8f6e';}
+      if(this.currentScaleType==='rses'){const s=this.rsesTotalScore;if(s>=31)return'#6b8f6e';if(s>=21)return'#d4a648';return'#c47b6b';}
+      if(this.currentScaleType==='phq9'){const s=this.phq9TotalScore;if(s>=30)return'#c47b6b';if(s>=20)return'#e89547';if(s>=10)return'#d4a648';return'#6b8f6e';}
+      if(this.currentScaleType==='gad7'){const s=this.gad7TotalScore;if(s>=30)return'#c47b6b';if(s>=20)return'#e89547';if(s>=10)return'#d4a648';return'#6b8f6e';}
+      return'#5b7a9c';
+    },
+    currentRiskIndex(){
+      if(!this.currentScale.riskLevels)return 0;
+      const score=this.currentTotalScore;
+      let idx=0;
+      for(let i=0;i<this.currentScale.riskLevels.length;i++){
+        const parts=this.currentScale.riskLevels[i].range.split('-');
+        const lo=parseInt(parts[0]),hi=parseInt(parts[1]);
+        if(score>=lo&&score<=hi){idx=i;break;}
+        if(score>=lo)idx=i;
+      }
+      return idx;
+    },
+    currentResultDesc(){
+      if(this.currentScaleType==='pss10'){const s=this.pssTotalScore;if(s>=27)return'你的压力水平较高，可能经常感到生活中的事情超出自己的控制范围。这种状态如果持续，可能会影响身心健康。建议你认真关注自己的压力状况，尝试采取积极的减压措施。';if(s>=14)return'你的压力水平适中，这是大多数人的正常状态。你能够感受到生活中的压力，但总体上还在可承受的范围内。保持觉察，适时调整，会让你的状态更好。';return'你的压力水平较低，说明你能够较好地掌控生活中的事务，应对压力的能力较强。这是一种非常健康的状态，请继续保持！';}
+      if(this.currentScaleType==='rses'){const s=this.rsesTotalScore;if(s>=31)return'你的自尊水平较高，对自己有积极的认知和评价。你能够接纳自己的优点和不足，对自己持有肯定的态度。这种健康的自尊水平有助于你在生活和工作中展现自信。';if(s>=21)return'你的自尊水平适中，对自己的评价总体上是积极的，但有时可能会因为某些事情而自我怀疑。这是大多数人的正常状态，通过有意识的练习可以进一步提升自我认同感。';return'你的自尊水平偏低，可能经常对自己持有负面评价，容易自我否定。请记住，自尊水平是可以通过练习提升的，每个人都是独特而有价值的。如果这种感受持续困扰你，建议寻求专业支持。';}
+      if(this.currentScaleType==='phq9'){const s=this.phq9TotalScore;if(s>=30)return'你的抑郁情绪较为明显，可能经常感到情绪低落、兴趣减退、疲倦乏力。这种状态如果持续超过两周，建议你认真关注自己的心理健康，考虑寻求专业支持。请记住，寻求帮助是勇敢的表现。';if(s>=20)return'你有中等程度的抑郁情绪，可能在近期感到有些低落或失去动力。这是身体在提醒你需要关注自己的情绪状态。通过自我调节和适当的支持，这种状态是可以改善的。';if(s>=10)return'你有轻度的抑郁情绪，这可能是近期生活压力或情绪波动的正常反应。大多数人在某些时期都会经历这种状态，不必过于担心。通过一些简单的调节方法，你可以很快恢复。';return'你的抑郁情绪较轻，说明你目前的情绪状态良好。你能够体验快乐，保持积极的生活态度。请继续保持你的生活方式和心理状态。';}
+      if(this.currentScaleType==='gad7'){const s=this.gad7TotalScore;if(s>=30)return'你的焦虑情绪较为明显，可能经常感到紧张、担忧、坐立不安。这种状态如果持续，可能会影响日常生活和睡眠质量。建议你认真关注自己的焦虑状况，尝试采取积极的缓解措施，必要时寻求专业支持。';if(s>=20)return'你有中等程度的焦虑情绪，可能在近期感到比平时更紧张或担忧。这是身体在提醒你需要放松和调整。通过适当的自我调节技巧，这种状态是可以改善的。';if(s>=10)return'你有轻度的焦虑情绪，这可能是近期生活压力或挑战的正常反应。适度的焦虑有时反而能帮助我们更好地应对任务。通过一些简单的放松方法，你可以很好地管理这种状态。';return'你的焦虑情绪较轻，说明你能够较好地管理自己的情绪状态，保持内心的平静。请继续保持你的生活方式和心理调节方式。';}
+      return'';
+    },
+    currentPercentile(){
+      const levels=this.currentScale.riskLevels;
+      if(!levels)return'';
+      const idx=this.currentRiskIndex;
+      const lowerPct=levels.slice(0,idx).reduce((sum,l)=>sum+l.pct,0);
+      return'超过约 '+lowerPct+'% 的人群';
+    },
+    currentAdvice(){
+      if(this.currentScaleType==='pss10')return this.pssAdvice;
+      if(this.currentScaleType==='rses')return this.rsesAdvice;
+      if(this.currentScaleType==='phq9')return this.phq9Advice;
+      if(this.currentScaleType==='gad7')return this.gad7Advice;
+      return'';
+    },
+    currentTechniques(){
+      if(this.currentScaleType==='pss10')return this.pssStressTechniques||[];
+      if(this.currentScaleType==='rses')return this.rsesExercises||[];
+      if(this.currentScaleType==='phq9')return this.phq9Techniques||[];
+      if(this.currentScaleType==='gad7')return this.gad7Techniques||[];
+      return[];
+    },
+    currentPlan(){
+      if(this.currentScaleType==='pss10')return this.pssSevenDayPlan||[];
+      if(this.currentScaleType==='rses')return this.rsesGrowthPlan||[];
+      if(this.currentScaleType==='phq9')return this.phq9SevenDayPlan||[];
+      if(this.currentScaleType==='gad7')return this.gad7SevenDayPlan||[];
+      return[];
+    },
+    currentSelfHelp(){
+      if(this.currentScaleType==='pss10')return this.pssHelpOthers||'';
+      if(this.currentScaleType==='phq9')return this.phq9HelpOthers||'';
+      if(this.currentScaleType==='gad7')return this.gad7SelfHelp||'';
+      return'';
+    },
+    // ===== PSS-10 =====
+    pssAdvice(){
+      const s=this.pssTotalScore;
+      if(s>=27)return'正念冥想：每天早晨起床后和晚上睡前各做10分钟。找一个安静的地方坐下，闭上眼睛，把注意力集中在呼吸上。当脑子里冒出想法时，不要评判，只是温和地把注意力拉回到呼吸上。\n\n规律有氧运动：每周3-5次，每次30-45分钟。可以选择快走、慢跑、游泳或骑自行车。运动时心率保持在最大心率的60-70%。运动后你会感受到内啡肽释放带来的愉悦感。\n\n压力日记：每晚花10分钟写下当天的压力事件。格式：①发生了什么？②我的感受是什么？③我如何应对的？④下次可以怎么做得更好？坚持两周后你会发现压力模式。\n\n睡眠优化：固定就寝和起床时间，睡前1小时远离手机和电脑。卧室温度保持18-22℃。如果躺在床上15分钟睡不着，起来做点轻松的事。\n\n学会说"不"：面对额外请求时，先用"让我想想"争取缓冲时间。评估：这件事是否必须我做？是否现在必须做？如果不是，礼貌拒绝或委派他人。';
+      if(s>=14)return'规律运动：每周3次，每次30分钟。推荐瑜伽、太极或快走——这些运动既能锻炼身体又能放松心情。运动时注意感受身体的变化，把注意力从头脑转移到身体。\n\n时间管理：每天早上花5分钟列出今天的3件最重要的事（MIT法则）。用四象限法则分类任务：重要紧急→立即做，重要不紧急→计划做，紧急不重要→委托做，不重要不紧急→删除。\n\n放松爱好：每天安排30分钟"无目的"时间——听音乐、画画、做手工。关键是让大脑从"任务模式"切换到"享受模式"。\n\n社交充电：每周至少1次与好朋友面对面交流（不是微信聊天）。分享你的感受，也倾听对方的近况。社交连接是最好的天然减压剂。\n\n饮食调节：减少咖啡因（每天不超过2杯咖啡），增加富含Omega-3的食物（深海鱼、核桃），多吃富含镁的食物（菠菜、南瓜子）帮助放松肌肉和神经。';
+      return'继续保持：你目前的状态很好，说明你有一套适合自己的压力管理方式。建议你花点时间总结一下：是什么帮助你保持良好状态的？把这些方法记录下来。\n\n定期觉察：每周花5分钟做一次"压力温度计"——给本周的压力打分（0-10分），记录压力来源和你的应对方式。这样当压力升高时你能第一时间发现。\n\n成长目标：在压力较低时是学习新技能的好时机。推荐学习一项新的压力管理技巧（如正念冥想、认知重构），为未来储备工具。\n\n持续学习：推荐阅读《压力的信号》《自控力》或观看TED演讲"如何让压力成为你的朋友"（Kelly McGonigal）。\n\n帮助他人：你的良好状态可以感染身边的人。当朋友压力大时，倾听他们的感受，分享你保持良好状态的经验。但记住：你不需要解决别人的问题，倾听本身就是最大的帮助。';
+    },
+    pssStressTechniques(){
+      const s=this.pssTotalScore;
+      if(s>=27)return[{name:'478呼吸法',steps:'吸气4秒→屏息7秒→呼气8秒。重复4个循环。这个技巧能在90秒内激活副交感神经，快速降低焦虑感。适合在会议前、考试前或焦虑发作时使用。'},{name:'渐进性肌肉放松',steps:'从脚趾开始，依次紧绷-放松每个肌肉群（脚→腿→腹部→手→手臂→肩膀→面部）。每个部位紧绷5秒，放松10秒。全程约15分钟。睡前做效果最佳。'},{name:'认知重构ABC法',steps:'A（事件）：写下让你压力大的事件。B（信念）：写下你对事件的自动想法。C（结果）：写下你的情绪和行为。然后问自己：B是否合理？有没有其他解释？用更客观的想法替代它。'},{name:'身体扫描冥想',steps:'平躺或坐直，从头顶开始，依次感受身体每个部位的感觉。不评判，只观察。每天10分钟，坚持2周可显著降低压力基线。'}];
+      if(s>=14)return[{name:'正念呼吸',steps:'坐直，闭眼，把注意力放在呼吸上。感受空气进入鼻腔、胸腔扩张、腹部隆起。当走神时，温和地拉回注意力。每天5-10分钟即可。'},{name:'散步冥想',steps:'在户外慢慢走，感受脚掌接触地面的感觉、风吹过皮肤的感觉、周围的声音。不需要到达某个目的地，只是感受走路本身。15-20分钟。'},{name:'感恩练习',steps:'每晚睡前写下今天发生的3件好事，以及为什么它们会发生。这个练习能重新训练大脑关注积极信息，降低压力感知。'},{name:'社交支持地图',steps:'画出你的社交支持网络：谁可以倾听你？谁可以给你建议？谁可以陪你做喜欢的事？当你需要支持时，知道该找谁本身就是一种力量。'}];
+      return[{name:'维持性正念',steps:'每天5分钟的正念练习，维持你目前的良好状态。可以在早晨刷牙时关注刷牙的感觉，或在吃饭时专注食物的味道和口感。'},{name:'优势日记',steps:'每天记录1件你做得好的事，以及你运用了什么优势。这能增强你的自我效能感，让你在面对未来压力时更有信心。'},{name:'压力接种',steps:'在低压状态下，主动尝试一些小的挑战（如公开演讲、学习新技能），让自己在安全的环境中练习压力应对，为未来更大的挑战做准备。'}];
+    },
+    pssHelpOthers(){
+      const s=this.pssTotalScore;
+      if(s>=27)return'你目前自己也承受着较大压力，在帮助他人之前请先照顾好自己。就像飞机上的氧气面罩原则——先给自己戴好，再帮助别人。当你状态好转后，可以用以下方式帮助他人：\n\n① 倾听而不评判：当朋友倾诉时，不要急着给建议或说"你应该..."。只需要说"我在听"、"这确实很难"。\n\n② 分享你的经历：告诉对方你也在经历压力，分享你正在尝试的减压方法。\n\n③ 陪伴而非替代：邀请对方一起散步、运动或做手工。\n\n④ 帮助寻找资源：如果对方的情况严重，温和地建议寻求专业帮助。';
+      if(s>=14)return'你有适度的压力管理能力，可以成为身边人的支持力量：\n\n① 主动关心：如果发现朋友最近状态不好，主动问一句"最近怎么样？想聊聊吗？"\n\n② 做情绪容器：当对方倾诉时，你不需要解决问题，只需要接住对方的情绪。\n\n③ 分享减压技巧：把你正在使用的减压方法分享给对方。\n\n④ 创造轻松氛围：约对方一起做有趣的事。\n\n⑤ 知道边界：你不是专业心理咨询师。如果对方的问题超出你的能力范围，帮助ta寻找专业资源。';
+      return'你目前状态良好，是最有能力帮助他人的人：\n\n① 分享你的经验：告诉身边压力大的朋友，你是如何保持良好状态的。\n\n② 成为"减压伙伴"：邀请朋友一起运动、冥想或参加放松活动。\n\n③ 倾听和共情：练习"积极倾听"——放下手机，看着对方，不打断，不评判。\n\n④ 建立互助小组：可以发起一个小型的"减压互助群"，每周分享一件让自己放松的事。\n\n⑤ 关注危机信号：如果朋友出现持续失眠、食欲明显变化、社交退缩、表达消极想法等情况，请认真对待。全国心理援助热线：400-161-9995。';
+    },
+    pssSevenDayPlan(){
+      const s=this.pssTotalScore;
+      const dur=s>=27?'20分钟':s>=14?'15分钟':'10分钟';
+      return[
+        {day:'第1天',task:'晨起'+dur+'正念呼吸，晚间写压力日记'},
+        {day:'第2天',task:'30分钟有氧运动 + 睡前478呼吸法'},
+        {day:'第3天',task:dur+'渐进性肌肉放松 + 与好友聊天15分钟'},
+        {day:'第4天',task:'晨起'+dur+'正念 + 整理一个让你有控制感的空间'},
+        {day:'第5天',task:'30分钟运动 + 写下3件感恩的事'},
+        {day:'第6天',task:dur+'身体扫描冥想 + 做一件你热爱的事'},
+        {day:'第7天',task:'回顾本周压力日记，总结你的压力模式，制定下周计划'},
+      ];
+    },
+    // ===== RSES =====
+    rsesAdvice(){
+      const s=this.rsesTotalScore;
+      if(s>=31)return'保持自我肯定：你拥有健康的自尊水平，这是非常宝贵的心理资源。建议你继续做以下事情来维护这份自我认同：\n\n① 每周记录3件让你感到自豪的事，无论大小。这能持续强化你的正向自我认知。\n② 用你的自信去影响身边的人。当你真诚地表达对自己的认可时，也在给他人"自我接纳是可以的"的信号。\n③ 设定有挑战性的目标。高自尊意味着你有心理资本去追求更大的目标。\n④ 在成功时归因于自己的能力和努力，而非运气。\n⑤ 帮助自尊水平较低的朋友。分享你的心路历程，你的经历比任何理论都更有说服力。';
+      if(s>=21)return'每日成就日记：每晚睡前写下3件今天做得好的事。格式：①事件 ②我做了什么 ③这体现了我的什么品质。即使是很小的事也要记录。坚持21天，你的大脑会自动开始关注积极信息。\n\n积极自我对话：注意你内心对自己的声音。当你发现自己在说"我怎么这么笨"时，停下来，问自己：我会对好朋友说这样的话吗？如果不是，用你会对朋友说的话来替代。\n\n微小目标策略：设定"必定能完成"的小目标（如每天整理桌面5分钟）。完成后的成就感会累积，形成"我能做到"的正向循环。\n\n社交圈优化：多与欣赏你、鼓励你的人在一起。减少与持续否定你的人的接触。\n\n探索新领域：尝试一件你从未做过的事。在新的领域中，没有"过去的失败"来定义你，你可以重新发现自己。';
+      return'首先，请接纳此刻的自己。自尊水平偏低不是你的错，它可能来自童年经历、过去的挫折或长期的压力。请记住：自尊是可以提升的，就像肌肉一样，通过练习可以变得更强壮。\n\n每日一善：每天写下一件自己值得肯定的事，哪怕很小。这看起来简单，但它的原理是重新训练你的大脑去发现自己的价值。坚持30天，你会开始注意到改变。\n\n镜子练习：每天早晨对着镜子看着自己的眼睛，说出3个自己的优点。一开始可能会觉得别扭，这很正常。坚持下去，你会逐渐从内心接受这些话。\n\n从最小处开始：设定一个"不可能失败"的目标——比如每天整理床铺。完成后的成就感虽然微小，但它是你重建自信的基石。\n\n寻找温暖的人：远离那些总是否定你、嘲笑你的人。寻找那些能看到你优点的人。\n\n推荐阅读：《自尊的六大支柱》（Nathaniel Branden）、《被讨厌的勇气》（岸见一郎）。\n\n专业支持：如果持续的自我否定已经影响了你的日常生活，请考虑寻求专业心理咨询。全国心理援助热线：400-161-9995。';
+    },
+    rsesExercises(){
+      const s=this.rsesTotalScore;
+      if(s>=31)return[{name:'优势放大器',steps:'每周选择1个你的核心优势，有意识地在日常生活中放大它。记录：这周我在哪些场景下运用了这个优势？效果如何？'},{name:'感恩传递',steps:'每周写一张感谢卡片给对你有积极影响的人。表达感恩不仅强化你的社会连接，也让你更清晰地看到自己拥有的资源。'},{name:'舒适区拓展',steps:'每月做一件"有点害怕但能做到"的事。每次突破都会增强你的自我效能感。'}];
+      if(s>=21)return[{name:'成功档案',steps:'准备一个笔记本，专门记录你的成功经历——无论大小。当你自我怀疑时，翻开它回顾自己的能力。'},{name:'内心批评者对话',steps:'当内心出现"你不行"的声音时，把它写下来。然后在旁边写下"理性的回应"。'},{name:'能力清单',steps:'列出10件你擅长的事。贴在你能每天看到的地方。当自我怀疑时，读一遍这个清单。'},{name:'小步前进',steps:'选择一个你想提升的领域，把它分解成5个微小步骤。每完成一步就给自己一个小奖励。'}];
+      return[{name:'自我同情练习',steps:'当你犯错或感到挫败时，把手放在心口，对自己说："这很困难，但每个人都会犯错。我愿意善待自己。"这个练习来自心理学家 Kristin Neff 的研究。'},{name:'安全港冥想',steps:'闭上眼睛，想象一个让你完全安全和放松的地方。感受那个地方的声音、温度、气味。每天花5分钟"回到"这个地方。'},{name:'每日三肯定',steps:'每天晚上写下3个肯定自己的句子。格式："今天我___，这说明我是一个___。"'},{name:'边界练习',steps:'本周练习说1次"不"。从最小的请求开始。说"不"是尊重自己的表现。'},{name:'身体锚定',steps:'站直，双肩放松，微微抬起下巴，深呼吸3次。这个简单的身体姿势能立即提升你的自信感受。'}];
+    },
+    rsesGrowthPlan(){
+      const s=this.rsesTotalScore;
+      if(s>=31)return[{day:'第1-2周',task:'完成"优势放大器"练习，找到你最突出的2-3个优势并刻意运用'},{day:'第3-4周',task:'完成"舒适区拓展"练习，每月做一件有挑战性的事'},{day:'第5-8周',task:'用你的自信去支持和鼓励身边自尊水平较低的人'},{day:'持续进行',task:'保持每周成就记录，定期回顾自己的成长轨迹'}];
+      if(s>=21)return[{day:'第1周',task:'开始每日成就日记，每天写3件做得好的事'},{day:'第2周',task:'开始"内心批评者对话"练习，识别并挑战消极自我对话'},{day:'第3周',task:'创建"成功档案"，收集你的成功经历和正面反馈'},{day:'第4周',task:'设定并完成一个"小步前进"目标，体验成就感'},{day:'第5-8周',task:'继续以上练习，同时开始探索新领域'}];
+      return[{day:'第1周',task:'每天做"每日三肯定"练习，同时开始"自我同情练习"'},{day:'第2周',task:'练习"安全港冥想"，建立内心的安全基地'},{day:'第3周',task:'设定一个"不可能失败"的目标并完成它'},{day:'第4周',task:'找一个你信任的人分享你的感受'},{day:'持续进行',task:'如果自我练习效果有限，强烈建议寻求专业心理咨询'}];
+    },
+    // ===== PHQ-9 =====
+    phq9Advice(){
+      const s=this.phq9TotalScore;
+      if(s>=30)return'首先，请知道你并不孤单。抑郁情绪是一种常见的心理状态，它不是软弱，不是矫情，而是大脑在告诉你需要关怀自己了。\n\n寻求专业帮助：强烈建议你尽快预约心理咨询师或前往医院心理科就诊。就像感冒需要看医生一样，情绪生病了也需要专业帮助。你可以拨打全国心理援助热线400-161-9995获取支持。\n\n行为激活：抑郁时最想做的是什么都不做，但恰恰是行动能打破恶性循环。每天安排1件小活动（散步10分钟、给朋友发消息），完成后给自己肯定。关键是"先行动，后有感受"。\n\n规律作息：固定起床时间，每天接触自然光15-30分钟，规律三餐。身体的节律稳定了，情绪也会跟着改善。\n\n社交连接：每周至少与1个信任的人深入交流。告诉信任的人你的感受，让支持网络发挥作用。';
+      if(s>=20)return'行为激活计划：每天安排3件小活动，完成后在日历上打✓。坚持两周，你会发现"做不到"的信念会逐渐被"我可以"替代。\n\n规律运动：每周3次，每次30分钟的有氧运动。研究证明，中等强度运动对中等抑郁的改善效果与心理治疗相当。\n\n正念练习：每天10分钟身体扫描冥想——从头顶到脚趾，依次感受每个部位。不评判，只是观察。这能帮助你从"反刍思维"中抽离。\n\n认知日记：每天记录一个负面想法，然后问自己：①这个想法有证据吗？②有没有其他解释？③如果是朋友这样想，我会怎么劝ta？\n\n社交不退缩：每周至少保持2次社交活动，即使只是和好友一起吃饭。';
+      if(s>=10)return'自然疗法：每天在户外待20-30分钟，晒太阳、接触自然。研究表明，自然环境能显著降低抑郁指标。\n\n情绪表达：每天花10分钟做一件让你有愉悦感的事——听音乐、画画、写日记、做手工。\n\n规律运动：每周3次，每次20-30分钟。推荐瑜伽、快走或游泳。\n\n倾诉：找一个信任的朋友，每周聊一次你的感受。你也可以拨打心理援助热线400-161-9995进行匿名倾诉。\n\n感恩练习：每晚睡前写下3件今天发生的好事。这能重新训练大脑关注积极信息。';
+      return'继续保持：你目前情绪状态良好，说明你的生活方式和心理调节方式是有效的。建议你总结一下是什么帮助你保持好状态的。\n\n情绪温度计：每周给自己的情绪打分（1-10分），记录下来。当分数下降时你能第一时间察觉。\n\n预防性学习：在状态好的时候学习一些情绪管理技巧，为未来可能的低谷期做准备。\n\n帮助他人：你的良好状态可以感染身边的人。当朋友情绪低落时，倾听他们的感受。';
+    },
+    phq9Techniques(){
+      const s=this.phq9TotalScore;
+      if(s>=20)return[{name:'行为激活法',steps:'列出5件你以前喜欢但现在不想做的事。每天选1件去做，不管有没有动力。完成后在日历上画✓。关键是"先行动，后有感受"。'},{name:'认知重构ABC',steps:'A（事件）：写下让你低落的事。B（信念）：写下你的自动想法。C（结果）：写下你的情绪。然后问：B有证据吗？有没有反证？用更客观的想法替代它。'},{name:'身体锚定技术',steps:'当你陷入负面思维时，做5-4-3-2-1练习：找出环境中5个你看到的、4个你触摸到的、3个你听到的、2个你闻到的、1个你尝到的东西。'},{name:'相反行动',steps:'抑郁让你想躲起来，相反行动就是走出去。每次做与冲动相反的事，即使只做5分钟，都会打破抑郁的循环。'}];
+      return[{name:'情绪日记',steps:'每天花10分钟写下你的情绪。格式：今天我感觉____，因为____。我应对的方式是____。'},{name:'愉悦活动清单',steps:'列出10件让你感到愉悦或放松的事。每周从中选3件来做。'},{name:'正念呼吸',steps:'坐直，闭眼，把手放在腹部。吸气4秒感受腹部隆起，屏息2秒，呼气6秒感受腹部回落。重复10次。'}];
+    },
+    phq9HelpOthers(){
+      const s=this.phq9TotalScore;
+      if(s>=30)return'你现在最需要的是照顾好自己。就像飞机上的氧气面罩原则——先给自己戴好，再帮助别人。当你状态好转后：\n\n① 倾听而非说教：不要说"想开点"、"别人比你更惨"。只需要说"我在这里"、"我理解这很难"。\n\n② 陪伴而非强迫：约朋友一起散步、看电影或做手工。\n\n③ 帮助寻找资源：如果朋友的情况严重，温和地建议寻求专业帮助。全国心理援助热线：400-161-9995。';
+      if(s>=20)return'你有足够的能量帮助身边情绪低落的人：\n\n① 主动关心：如果发现朋友最近不爱说话、总是推脱聚会，主动问"最近怎么样？"\n\n② 做情绪容器：对方倾诉时不要急着给建议。可以说"这听起来确实很难"。\n\n③ 邀约活动：约对方一起做轻松的事——散步、吃饭、看电影。\n\n④ 关注危险信号：如果朋友出现持续失眠、食欲明显变化、社交完全退缩、表达消极想法等，请认真对待。';
+      return'你目前状态良好，最有能力帮助他人：\n\n① 分享经验：告诉朋友你是如何保持良好状态的。\n\n② 成为运动伙伴：约朋友一起运动。\n\n③ 倾听和共情：练习"积极倾听"——放下手机，看着对方，不打断，不评判。\n\n④ 建立互助小组：可以发起一个小型"情绪互助群"。\n\n⑤ 关注危机信号：全国心理援助热线：400-161-9995。';
+    },
+    phq9SevenDayPlan(){
+      const s=this.phq9TotalScore;
+      const dur=s>=30?'20分钟':s>=20?'15分钟':'10分钟';
+      return[
+        {day:'第1天',task:dur+'行为激活——做1件以前喜欢但最近没做的事'},
+        {day:'第2天',task:'户外散步20分钟 + '+dur+'正念呼吸'},
+        {day:'第3天',task:'联系1个信任的人聊15分钟 + 写认知日记'},
+        {day:'第4天',task:dur+'运动 + 做1件让自己愉悦的事'},
+        {day:'第5天',task:dur+'身体扫描冥想 + 写下3件感恩的事'},
+        {day:'第6天',task:'约1个人一起做活动（散步/吃饭/看电影）'},
+        {day:'第7天',task:'回顾本周情绪日记，找出你的情绪模式，制定下周计划'},
+      ];
+    },
+    // ===== GAD-7 =====
+    gad7Advice(){
+      const s=this.gad7TotalScore;
+      if(s>=30)return'首先，请知道焦虑是可以治疗的。你现在的感受是真实的，但它们不会永远持续。\n\n专业支持：强烈建议你寻求专业心理咨询。认知行为疗法（CBT）对焦虑障碍有显著效果。你可以拨打全国心理援助热线400-161-9995获取支持。\n\n每日放松练习：每天2次，每次15分钟。早晨做渐进性肌肉放松，晚上做身体扫描冥想。坚持2周，焦虑基线会明显下降。\n\n减少刺激源：限制咖啡因（每天不超过1杯咖啡），减少社交媒体使用时间（每天不超过1小时），睡前2小时远离电子设备。\n\n担忧时间：每天固定1个15分钟的"担忧时间"。把所有担忧写下来，然后问：①这个担忧会发生吗？②如果发生了，最坏的结果是什么？③我能做什么来预防或应对？\n\n规律运动：每周4-5次，每次30-45分钟有氧运动。运动是天然的"抗焦虑药"。';
+      if(s>=20)return'478呼吸法：吸气4秒→屏息7秒→呼气8秒。重复4个循环。这个技巧能在90秒内激活副交感神经，快速降低焦虑感。\n\n认知重构：当你担忧时，问自己3个问题：①这个担忧有事实依据吗？②最可能的结果是什么（不是最坏的）？③如果朋友这样担忧，我会怎么劝ta？\n\n运动：每周3-4次，每次30分钟。推荐瑜伽、慢跑或游泳。运动后焦虑感通常明显下降。\n\n信息节食：减少刷手机、看新闻的时间。设定每天2个固定时段查看消息，其余时间关闭非必要通知。\n\n睡眠优先：焦虑和睡眠不足形成恶性循环。固定就寝时间，睡前1小时做放松活动。';
+      if(s>=10)return'腹式呼吸：手放在腹部，吸气时感受腹部隆起，呼气时感受腹部回落。每天3次，每次5分钟。\n\n接触自然：每天在户外待15-20分钟。研究证明，自然环境能显著降低焦虑指标。\n\n放松活动：每天安排30分钟"无目的"时间——听音乐、画画、做手工。\n\n时间管理：每天早上列出3件最重要的事，按优先级完成。学会委托和放弃非核心任务。\n\n倾诉：找一个信任的朋友，每周聊一次你的感受。把担忧说出来，它就没那么可怕了。';
+      return'继续保持：你目前的状态很好，说明你有一套适合自己的情绪管理方式。\n\n定期觉察：每周做一次"焦虑温度计"——给本周的焦虑打分（0-10分），记录触发因素和你的应对方式。\n\n预防性学习：在焦虑较低时学习一些放松技巧（如正念、呼吸法），为未来可能的压力期储备工具。\n\n推荐阅读：《焦虑的意义》（Rollo May）、《自控力》（Kelly McGonigal）。';
+    },
+    gad7Techniques(){
+      const s=this.gad7TotalScore;
+      if(s>=20)return[{name:'478呼吸法',steps:'吸气4秒（鼻子）→屏息7秒→呼气8秒（嘴巴）。重复4个循环。这个技巧能在90秒内激活副交感神经，快速降低心率和焦虑感。'},{name:'渐进性肌肉放松',steps:'从脚趾开始，依次紧绷5秒-放松10秒每个肌肉群。全程约15分钟。焦虑时肌肉会不自觉紧绷，这个练习能帮你释放身体张力。'},{name:'担忧时间法',steps:'每天设定1个15分钟的固定"担忧时间"。在此期间把所有担忧写下来，然后逐一分析。在担忧时间外，当焦虑出现时告诉自己"现在不是担忧时间"。'},{name:'54321接地技术',steps:'当焦虑让你感觉失控时，找出：5个你看到的物体、4个你触摸到的感觉、3个你听到的声音、2个你闻到的气味、1个你尝到的味道。'}];
+      return[{name:'腹式呼吸',steps:'一手放在胸口，一手放在腹部。吸气时腹部隆起（胸口不动），呼气时腹部回落。每天3次，每次5分钟。'},{name:'正念散步',steps:'慢慢走，感受脚掌接触地面的每一步。注意周围的声音、气味和颜色。15分钟即可。'},{name:'担忧日记',steps:'每晚花5分钟写下今天的担忧。格式：①我担忧什么？②它发生了吗？③如果没发生，我的担忧是否有必要？'}];
+    },
+    gad7SelfHelp(){
+      const s=this.gad7TotalScore;
+      if(s>=30)return'当焦虑发作（突然强烈的恐惧或不舒服）时，请按以下步骤自救：\n\n① 认知提醒：对自己说"这是焦虑反应，不是真正的危险，它会在几分钟内过去"。\n\n② 478呼吸：吸气4秒→屏息7秒→呼气8秒。重复4个循环。\n\n③ 54321接地：找出5个看到的物体、4个触摸到的感觉、3个听到的声音、2个闻到的气味、1个尝到的味道。\n\n④ 身体锚定：双脚踩在地上感受重力，或双手握住椅子扶手感受触感。提醒自己"我现在是安全的"。\n\n⑤ 不逃避：不要立刻离开当前场景。逃避会强化焦虑。试着在焦虑中多待5分钟，你会发现它会自然消退。\n\n⑥ 寻求帮助：如果焦虑发作频繁或持续，请寻求专业帮助。全国心理援助热线：400-161-9995。';
+      if(s>=20)return'当焦虑感升高时，请按以下步骤自救：\n\n① 感知焦虑：注意你身体的焦虑信号（心跳加速、手心出汗、呼吸变浅）。\n\n② 腹式呼吸：手放在腹部，吸气4秒感受腹部隆起，呼气6秒感受腹部回落。重复10次。\n\n③ 挑战想法：问自己"我正在担忧的事真的会发生吗？概率多大？最可能的结果是什么？"\n\n④ 行动一个小步骤：做一件你能控制的小事（整理桌面、喝水、走几步）。\n\n⑤ 持续觉察：焦虑像海浪，有涨有落。不要对抗它，而是像观察海浪一样观察它的来去。通常15-20分钟内会自然消退。';
+      return'你的焦虑水平较低，以下是日常预防技巧：\n\n① 日常呼吸练习：每天5分钟腹式呼吸，维持你的良好状态。\n\n② 焦虑信号识别：了解你的身体焦虑信号（如肩膀紧绷、咬嘴唇），在它刚出现时就用呼吸法调节。\n\n③ 压力接种：在低压期主动尝试小挑战，在安全环境中练习应对，为未来储备能力。';
+    },
+    gad7SevenDayPlan(){
+      const s=this.gad7TotalScore;
+      const dur=s>=30?'20分钟':s>=20?'15分钟':'10分钟';
+      return[
+        {day:'第1天',task:'学习478呼吸法，早中晚各做1轮'},
+        {day:'第2天',task:dur+'渐进性肌肉放松 + 户外散步20分钟'},
+        {day:'第3天',task:'设立"担忧时间"——15分钟把担忧写下来并分析'},
+        {day:'第4天',task:dur+'运动 + 练习54321接地技术'},
+        {day:'第5天',task:dur+'正念呼吸 + 写担忧日记'},
+        {day:'第6天',task:'减少手机使用——每天不超过1小时社交媒体'},
+        {day:'第7天',task:'回顾本周焦虑日记，找出触发因素和有效方法，制定下周计划'},
+      ];
+    },
+  },
+  methods:{
+    // ===== Navigation =====
+    enterGuide(type){
+      this.currentScaleType=type;
+      this.loadScale(type);
+      this.guideAgreed=false;
+      this.scaleStep='guide';
+    },
+    startQuiz(){
+      if(!this.guideAgreed)return;
+      this.currentQuestionIdx=0;
+      this.slideDirection='slide-left';
+      this.answers={};
+      this.scaleStep='quiz';
+    },
+    handleQuizBack(){
+      if(this.currentQuestionIdx>0){
+        this.slideDirection='slide-right';
+        this.currentQuestionIdx--;
+      }else{
+        if(Object.keys(this.answers).length>0){
+          if(!confirm('您有已作答的题目，返回将丢失进度，确定返回吗？'))return;
+        }
+        this.scaleStep='guide';
+        this.answers={};
+      }
+    },
+    selectOption(question,optionIndex){
+      this.$set(this.answers,question.id,optionIndex);
+      setTimeout(()=>{
+        if(this.currentQuestionIdx<this.questions.length-1){
+          this.slideDirection='slide-left';
+          this.currentQuestionIdx++;
+        }else{
+          this.submitAnswers();
+        }
+      },300);
+    },
+    isSelected(questionId,optionIndex){
+      return this.answers[questionId]===optionIndex;
+    },
+    handleTouchStart(e){
+      this.touchStartX=e.touches[0].clientX;
+    },
+    handleTouchEnd(e){
+      const diff=this.touchStartX-e.changedTouches[0].clientX;
+      if(Math.abs(diff)>50){
+        if(diff>0&&this.currentQuestionIdx<this.questions.length-1){
+          this.slideDirection='slide-left';
+          this.currentQuestionIdx++;
+        }else if(diff<0&&this.currentQuestionIdx>0){
+          this.slideDirection='slide-right';
+          this.currentQuestionIdx--;
+        }
+      }
+    },
+    // ===== Load Scale =====
+    loadScale(type){
+      this.currentScaleType=type;
+      this.answers={};
+      const dataMap={bigfive:BIGFIVE_DATA,pss10:PSS10_DATA,rses:RSES_DATA,phq9:PHQ9_DATA,gad7:GAD7_DATA};
+      const optMap={bigfive:BIGFIVE_OPTIONS,pss10:PSS10_OPTIONS,rses:RSES_OPTIONS,phq9:PHQ9_OPTIONS,gad7:GAD7_OPTIONS};
+      const data=dataMap[type],opts=optMap[type];
+      this.questions=data.map(item=>({
+        id:item[0],text:item[1],dimension:item[2],isReverse:item[3],
+        options:opts.map(o=>({label:o.label,value:o.value})),
+      }));
+    },
+    // ===== Scoring =====
+    computeBigFiveScores(){
+      const scores={extraversion:0,agreeableness:0,conscientiousness:0,emotional_stability:0,openness:0};
+      this.questions.forEach(q=>{
+        const a=this.answers[q.id];
+        if(a===undefined)return;
+        let v=a+1;
+        if(q.isReverse)v=6-v;
+        scores[q.dimension]+=v;
+      });
+      return scores;
+    },
+    computePSS10Scores(){
+      const scores={distress:0,coping:0};
+      this.questions.forEach(q=>{
+        const a=this.answers[q.id];
+        if(a===undefined)return;
+        let v=a;
+        if(q.isReverse)v=4-v;
+        scores[q.dimension]+=v;
+      });
+      const total=scores.distress+scores.coping;
+      const dimensionData={};
+      Object.keys(scores).forEach(k=>{
+        dimensionData[k]={label:PSS10_DIMENSION_MAP[k].label,score:scores[k],maxScore:PSS10_DIMENSION_MAP[k].maxScore,desc:PSS10_DIMENSION_MAP[k].desc};
+      });
+      return{total,dimensionData};
+    },
+    computeRSEScores(){
+      const scores={positive:0,negative:0};
+      this.questions.forEach(q=>{
+        const a=this.answers[q.id];
+        if(a===undefined)return;
+        let v=a+1;
+        if(q.isReverse)v=5-v;
+        scores[q.dimension]+=v;
+      });
+      const total=scores.positive+scores.negative;
+      const dimensionData={};
+      Object.keys(scores).forEach(k=>{
+        dimensionData[k]={label:RSES_DIMENSION_MAP[k].label,score:scores[k],maxScore:RSES_DIMENSION_MAP[k].maxScore,desc:RSES_DIMENSION_MAP[k].desc};
+      });
+      return{total,dimensionData};
+    },
+    computePHQ9Scores(){
+      const scores={emotional:0,somatic:0};
+      this.questions.forEach(q=>{
+        const a=this.answers[q.id];
+        if(a===undefined)return;
+        scores[q.dimension]+=a;
+      });
+      const total=scores.emotional+scores.somatic;
+      const dimensionData={};
+      Object.keys(scores).forEach(k=>{
+        dimensionData[k]={label:PHQ9_DIMENSION_MAP[k].label,score:scores[k],maxScore:PHQ9_DIMENSION_MAP[k].maxScore,desc:PHQ9_DIMENSION_MAP[k].desc};
+      });
+      return{total,dimensionData};
+    },
+    computeGAD7Scores(){
+      const scores={emotional:0,physical:0};
+      this.questions.forEach(q=>{
+        const a=this.answers[q.id];
+        if(a===undefined)return;
+        scores[q.dimension]+=a;
+      });
+      const total=scores.emotional+scores.physical;
+      const dimensionData={};
+      Object.keys(scores).forEach(k=>{
+        dimensionData[k]={label:GAD7_DIMENSION_MAP[k].label,score:scores[k],maxScore:GAD7_DIMENSION_MAP[k].maxScore,desc:GAD7_DIMENSION_MAP[k].desc};
+      });
+      return{total,dimensionData};
+    },
+    submitAnswers(){
+      const unanswered=this.questions.filter(q=>this.answers[q.id]===undefined);
+      if(unanswered.length>0){
+        alert('请回答所有题目后再提交！');
+        return;
+      }
+      this.scaleStep='transition';
+      setTimeout(()=>{
+        if(this.currentScaleType==='bigfive'){
+          this.resultScores=this.computeBigFiveScores();
+          this.pssTotalScore=0;this.pssDimensionData={};
+          this.rsesTotalScore=0;this.rsesDimensionData={};
+          this.phq9TotalScore=0;this.phq9DimensionData={};
+          this.gad7TotalScore=0;this.gad7DimensionData={};
+        }else if(this.currentScaleType==='pss10'){
+          const r=this.computePSS10Scores();
+          this.pssTotalScore=r.total;this.pssDimensionData=r.dimensionData;
+          this.resultScores={};
+        }else if(this.currentScaleType==='rses'){
+          const r=this.computeRSEScores();
+          this.rsesTotalScore=r.total;this.rsesDimensionData=r.dimensionData;
+          this.resultScores={};
+        }else if(this.currentScaleType==='phq9'){
+          const r=this.computePHQ9Scores();
+          this.phq9TotalScore=r.total;this.phq9DimensionData=r.dimensionData;
+          this.resultScores={};
+        }else if(this.currentScaleType==='gad7'){
+          const r=this.computeGAD7Scores();
+          this.gad7TotalScore=r.total;this.gad7DimensionData=r.dimensionData;
+          this.resultScores={};
+        }
+        this.scaleStep='report';
+      },1500);
+    },
+    closeResult(){
+      this.scaleStep='select';
+      this.resultScores={};
+      this.pssTotalScore=0;this.pssDimensionData={};
+      this.rsesTotalScore=0;this.rsesDimensionData={};
+      this.phq9TotalScore=0;this.phq9DimensionData={};
+      this.gad7TotalScore=0;this.gad7DimensionData={};
+      this.currentQuestionIdx=0;
+    },
+    shareReport(){
+      const text=this.currentScaleType==='bigfive'?this.getPersonalitySummary():this.currentResultDesc;
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(text).then(()=>alert('报告摘要已复制到剪贴板！')).catch(()=>alert('复制失败，请手动截图分享'));
+      }else{
+        alert('请手动截图分享');
+      }
+    },
+    // ===== Unlock System =====
+    isReportUnlocked(scaleId){
+      return this.unlockedReports.includes(scaleId);
+    },
+    openPasswordModal(scaleId){
+      this.passwordModal.scaleId=scaleId;
+      this.passwordModal.input='';
+      this.passwordModal.error='';
+      this.passwordModal.show=true;
+    },
+    closePasswordModal(){
+      this.passwordModal.show=false;
+      this.passwordModal.input='';
+      this.passwordModal.error='';
+      this.passwordModal.scaleId=null;
+    },
+    verifyPassword(){
+      const input=this.passwordModal.input.trim();
+      const scaleId=this.passwordModal.scaleId;
+      if(!input){
+        this.passwordModal.error='请输入体验码';
+        return;
+      }
+      if(hashCode(input)===UNLOCK_HASHES[scaleId]){
+        if(!this.unlockedReports.includes(scaleId)){
+          this.unlockedReports.push(scaleId);
+        }
+        localStorage.setItem('unlockedReports',JSON.stringify(this.unlockedReports));
+        this.closePasswordModal();
+        this.$nextTick(()=>{
+          if(scaleId==='bigfive'){
+            this.initRadarChart();
+          }else if(this.scaleStep==='report'){
+            this.initGaugeChart();
+          }
+        });
+      }else{
+        this.passwordModal.error='体验码不正确，请联系管理员获取';
+      }
+    },
+    getScaleName(scaleId){
+      const map={bigfive:'大五人格测试',pss10:'压力知觉量表',rses:'自尊量表',phq9:'抑郁情绪筛查',gad7:'焦虑情绪筛查'};
+      return map[scaleId]||scaleId;
+    },
+    // ===== Big Five Insight Methods =====
+    getLevelLabel(score){
+      if(score>=40)return'偏高';if(score>=30)return'中等';return'偏低';
+    },
+    getDimensionDesc(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return'';
+      if(score>=40)return ins.high.desc.split('。')[0]+'。';
+      if(score>=30)return ins.medium.desc.split('。')[0]+'。';
+      return ins.low.desc.split('。')[0]+'。';
+    },
+    getDetailedInsight(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return'';
+      if(score>=40)return ins.high.desc;
+      if(score>=30)return ins.medium.desc;
+      return ins.low.desc;
+    },
+    getTags(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return[];
+      if(score>=40)return ins.high.tags;
+      if(score>=30)return ins.medium.tags;
+      return ins.low.tags;
+    },
+    getPersonalitySummary(){
+      const dims=this.dimOrder;
+      const sorted=dims.map(d=>({dim:d,score:this.resultScores[d]||0})).sort((a,b)=>b.score-a.score);
+      const top2=sorted.slice(0,2).map(s=>BIGFIVE_DIMENSION_MAP[s.dim]);
+      const bottom2=sorted.slice(-2).map(s=>BIGFIVE_DIMENSION_MAP[s.dim]);
+      const ext=this.resultScores.extraversion||0;
+      const agr=this.resultScores.agreeableness||0;
+      const con=this.resultScores.conscientiousness||0;
+      const sta=this.resultScores.emotional_stability||0;
+      const opn=this.resultScores.openness||0;
+      let type='综合型';
+      if(ext>=35&&agr>=35)type='社交亲和型';
+      else if(con>=35&&sta>=35)type='稳健高效型';
+      else if(opn>=35&&ext>=35)type='创意领袖型';
+      else if(agr>=35&&sta>=35)type='平和友善型';
+      else if(con>=35&&opn>=35)type='学者型';
+      else if(ext>=35)type='活力型';
+      else if(agr>=35)type='友善型';
+      else if(con>=35)type='责任型';
+      else if(opn>=35)type='探索型';
+      else if(sta>=35)type='沉稳型';
+      const avg=dims.reduce((sum,d)=>sum+(this.resultScores[d]||0),0)/dims.length;
+      let overall='';
+      if(avg>=38)overall='性格特质鲜明，各方面都表现得较为突出，是一个充满能量和魅力的人。';
+      else if(avg>=30)overall='性格均衡，在大多数情境下都能找到适合自己的应对方式，适应能力较强。';
+      else overall='性格沉稳内敛，有着自己独特的节奏和风格，在适合自己的领域能够发挥出色。';
+      return'你的性格类型倾向于「'+type+'」。你最为突出的性格特质是 '+top2.join('、')+'，这些是你人格中的核心优势。相对而言，你在 '+bottom2.join('、')+' 方面的表现较为内敛。综合来看，你是一个'+overall;
+    },
+    getActionGuide(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return'';
+      if(score>=40)return ins.high.action;
+      if(score>=30)return ins.medium.action;
+      return ins.low.action;
+    },
+    getGrowthGuide(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return'';
+      if(score>=40)return ins.high.growth;
+      if(score>=30)return ins.medium.growth;
+      return ins.low.growth;
+    },
+    getRelationshipGuide(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return'';
+      if(score>=40)return ins.high.relationship;
+      if(score>=30)return ins.medium.relationship;
+      return ins.low.relationship;
+    },
+    getCareerGuide(dim,score){
+      const ins=DIMENSION_INSIGHTS[dim];if(!ins)return'';
+      if(score>=40)return ins.high.career;
+      if(score>=30)return ins.medium.career;
+      return ins.low.career;
+    },
+    getSelfObservationList(){
+      const list=[];
+      this.dimOrder.forEach(dim=>{
+        const score=this.resultScores[dim]||0;
+        const label=BIGFIVE_DIMENSION_MAP[dim];
+        if(score>=40){
+          list.push(label+'（'+score+'分·偏高）：每周记录3次你在这一维度上的典型行为。问自己：这周我哪些行为体现了这个特质？这些行为带来了什么结果？有没有过度发挥的地方？');
+        }else if(score>=30){
+          list.push(label+'（'+score+'分·中等）：每周观察1-2次这个维度在你生活中的表现。记录：什么情境下我表现出偏高？什么情境下偏低？找到你的"最佳状态触发器"。');
+        }else{
+          list.push(label+'（'+score+'分·偏低）：每周留意1次这个维度对你的影响。问自己：这个特质偏低是否在某些场景下造成了困扰？我可以做哪些微小的调整来改善？');
+        }
+      });
+      return list;
+    },
+    // ===== ECharts =====
+    initRadarChart(){
+      const el=this.$refs.chartRadar;
+      if(!el)return;
+      const chart=echarts.init(el);
+      const dims=BIGFIVE_DIMENSION_ORDER;
+      chart.setOption({
+        radar:{
+          indicator:dims.map(d=>({name:BIGFIVE_DIMENSION_MAP[d],max:50})),
+          shape:'polygon',splitNumber:5,
+          axisName:{color:'#2b2b33',fontSize:11,fontWeight:600},
+          splitArea:{areaStyle:{color:['rgba(91,122,156,0.02)','rgba(91,122,156,0.05)']}},
+          splitLine:{lineStyle:{color:'#e2ddd6'}},
+          axisLine:{lineStyle:{color:'#e2ddd6'}},
+        },
+        series:[{
+          type:'radar',
+          data:[
+            {value:dims.map(d=>this.resultScores[d]||0),name:'你的得分',
+              areaStyle:{color:'rgba(91,122,156,0.2)'},
+              lineStyle:{color:'#5b7a9c',width:2},
+              itemStyle:{color:'#5b7a9c'},
+              symbol:'circle',symbolSize:6,
+            },
+            {value:dims.map(d=>this.dimNorm[d]),name:'常模均值',
+              areaStyle:{color:'rgba(107,143,110,0.08)'},
+              lineStyle:{color:'#6b8f6e',type:'dashed',width:1.5},
+              itemStyle:{color:'#6b8f6e'},
+              symbol:'circle',symbolSize:5,
+            },
+          ],
+        }],
+      });
+    },
+    initGaugeChart(){
+      const el=this.$refs.chartGauge;
+      if(!el)return;
+      const chart=echarts.init(el);
+      const score=this.currentTotalScore;
+      const max=this.currentScale.maxScore;
+      const colorZones=[];
+      this.currentScale.riskLevels.forEach(l=>{
+        const parts=l.range.split('-');
+        colorZones.push([parseInt(parts[1])/max,l.color]);
+      });
+      chart.setOption({
+        series:[{
+          type:'gauge',min:0,max:max,
+          startAngle:200,endAngle:-20,
+          axisLine:{lineStyle:{width:14,color:colorZones}},
+          pointer:{itemStyle:{color:this.currentRiskColor},length:'60%',width:4},
+          axisTick:{show:false},
+          splitLine:{show:false},
+          axisLabel:{show:false},
+          detail:{
+            formatter:'{value}',fontSize:28,fontWeight:'bold',
+            color:this.currentRiskColor,offsetCenter:[0,'30%'],
+          },
+          data:[{value:score}],
+        }],
+      });
+    },
+  },
+  watch:{
+    scaleStep(val){
+      if(val==='report'){
+        this.$nextTick(()=>{
+          if(this.currentScaleType==='bigfive'){
+            this.initRadarChart();
+          }else{
+            this.initGaugeChart();
+          }
+        });
+      }
+    },
+  },
+  mounted(){
+    const saved=localStorage.getItem('unlockedReports');
+    if(saved){
+      try{this.unlockedReports=JSON.parse(saved);}catch(e){this.unlockedReports=[];}
+    }
+    this.loadScale('bigfive');
+  },
+});
+</script>
+</body>
+</html>
