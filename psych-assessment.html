@@ -990,7 +990,7 @@ body {
            @keyup.enter="verifyPassword" />
     <div v-if="passwordModal.error" class="modal-error">{{ passwordModal.error }}</div>
     <button class="modal-btn" @click="verifyPassword">确认解锁</button>
-    <p class="modal-hint">体验码请联系管理员获取</p>
+    <p class="modal-hint">输入 888 即可解锁全部量表</p>
   </div>
 </div>
 
@@ -1269,7 +1269,7 @@ const DIMENSION_INSIGHTS = {
 // ===== Unlock System (Frontend Hash Verification) =====
 function hashCode(str){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return String(Math.abs(h));}
 const UNLOCK_HASHES={};
-(function(){const codes=['VIP888','RELAX888','LOVE888','PHQ888','GAD888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});UNLOCK_HASHES._universal=hashCode('888888');})();
+(function(){const codes=['888','888','888','888','888'];const keys=['bigfive','pss10','rses','phq9','gad7'];keys.forEach((k,i)=>{UNLOCK_HASHES[k]=hashCode(codes[i]);});UNLOCK_HASHES._universal=hashCode('888');})();
 
 // ===== Vue Instance =====
 new Vue({
@@ -1729,9 +1729,12 @@ new Vue({
         return;
       }
       if(hashCode(input)===UNLOCK_HASHES[scaleId]||hashCode(input)===UNLOCK_HASHES._universal){
-        if(!this.unlockedReports.includes(scaleId)){
-          this.unlockedReports.push(scaleId);
-        }
+        var allKeys=['bigfive','pss10','rses','phq9','gad7'];
+        allKeys.forEach(function(k){
+          if(!this.unlockedReports.includes(k)){
+            this.unlockedReports.push(k);
+          }
+        }.bind(this));
         localStorage.setItem('unlockedReports',JSON.stringify(this.unlockedReports));
         this.closePasswordModal();
         this.$nextTick(()=>{
